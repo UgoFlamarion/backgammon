@@ -1,7 +1,11 @@
 package fr.mugen.game.framework;
 
 public interface Controls {
-	
-	public Object getInput();
+
+  public void enable();
+
+  public void disable();
+
+  public Move getMove();
 
 }

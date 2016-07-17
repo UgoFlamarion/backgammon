@@ -1,40 +1,40 @@
 package fr.mugen.game.backgammon;
 
-import fr.mugen.game.framework.Board;
 import fr.mugen.game.framework.Move;
 
 public class BackgammonMove implements Move {
 
-	private BackgammonColumn from;
-	private BackgammonColumn to;
-	private Dice dice;
+  private final BackgammonColumn from;
+  private final BackgammonColumn to;
+  private final Dice             dice;
 
-	public BackgammonMove(Board board, String input, Dice dice) {
-		BackgammonColumn[][] columns = ((BackgammonBoard) board).getPositions();
-		String[] move = input.split("-");
+  public BackgammonMove(final BackgammonColumn from, final BackgammonColumn to, final Dice dice) {
+    // final String[] move = input.split("-");
+    //
+    // this.from = ((BackgammonBoard)
+    // board).getColumn(Integer.valueOf(move[0]));
+    // this.to = ((BackgammonBoard) board).getColumn(Integer.valueOf(move[1]));
+    //
+    // System.out.println("NEW MOVE FROM " + this.from.getPosition() + " TO " +
+    // this.to.getPosition());
+    this.from = from;
+    this.to = to;
+    this.dice = dice;
+  }
 
-		int _from = Integer.valueOf(move[0]) - 1;
-		int _to = Integer.valueOf(move[1]) - 1;
-		from = columns[Math.min(_from / 6, 4)][Math.min(_from % 6, 6)];
-		to = columns[Math.min(_to / 6, 4)][Math.min(_to % 6, 6)];
-		
-		System.out.println("NEW MOVE FROM " + from.getPosition() + " TO " + to.getPosition());
-		
-		this.dice = dice;
-	}
+  @Override
+  public void go() {
+    this.from.decreaseNumber();
+    this.to.increaseNumber();
+    this.dice.consume(Math.abs(this.from.getPosition() - this.to.getPosition()));
+  }
 
-	public void go() {
-		from.decreaseNumber();
-		to.increaseNumber();
-		dice.consume(Math.abs(from.getPosition() - to.getPosition()));
-	}
+  public BackgammonColumn getFrom() {
+    return this.from;
+  }
 
-	public BackgammonColumn getFrom() {
-		return from;
-	}
-
-	public BackgammonColumn getTo() {
-		return to;
-	}
+  public BackgammonColumn getTo() {
+    return this.to;
+  }
 
 }
