@@ -2,50 +2,52 @@ package fr.mugen.game.backgammon;
 
 public class BackgammonColumn {
 
-	public enum Color {
-		WHITE, BLACK, NONE
-	}
-	
-	private Color color;
-	private int number;
-	private int position;
+  public enum Color {
+    WHITE,
+    BLACK,
+    NONE
+  }
 
-	public BackgammonColumn(int position) {
-		this.position = position;
-		this.color = Color.NONE;
-	}
-	
-	public Color getColor() {
-		return color;
-	}
+  private Color     color;
+  private int       number;
+  private final int position;
 
-	public void setColor(Color color) {
-		this.color = color;
-	}
+  public BackgammonColumn(final int position) {
+    this.position = position;
+    this.color = Color.NONE;
+  }
 
-	public int getNumber() {
-		return number;
-	}
-	
-	public void setNumber(int number) {
-		this.number = number;
-	}
-	
-	public void increaseNumber() {
-		number++;
-	}
-	
-	public void decreaseNumber() {
-		number--;
-	}
+  public Color getColor() {
+    return this.color;
+  }
 
-	public int getPosition() {
-		return position;
-	}
-	
-	@Override
-	public String toString() {
-		return position + " - " + color.name() + " - " + number + " checkers";
-	}
+  public void setColor(final Color color) {
+    this.color = color;
+  }
+
+  public int getNumber() {
+    return this.number;
+  }
+
+  public void setNumber(final int number) {
+    this.number = number;
+  }
+
+  public void increaseNumber() {
+    this.number++;
+  }
+
+  public void decreaseNumber() {
+    this.number--;
+  }
+
+  public int getPosition() {
+    return this.position;
+  }
+
+  @Override
+  public String toString() {
+    return this.position + " - " + this.color.name() + " - " + this.number + " checkers";
+  }
 
 }

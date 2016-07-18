@@ -22,8 +22,8 @@ public class JavaFXUtils {
     return position <= 12 ? JavaFXDisplay.CURSORY_LINE1 : JavaFXDisplay.CURSORY_LINE2;
   }
 
-  public static double getScaleY(int position) {
-	return position <= 12 ? 1 : -1;
+  public static double getScaleY(final int position) {
+    return position <= 12 ? 1 : -1;
   }
 
 }

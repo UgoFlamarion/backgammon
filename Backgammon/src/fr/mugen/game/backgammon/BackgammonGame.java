@@ -37,9 +37,9 @@ public class BackgammonGame extends Game {
   }
 
   protected Player nextPlayer() {
-	if (((BackgammonBoard) board).getDice().keepPlaying())
-		return currentPlayer;
-	  
+    if (((BackgammonBoard) this.board).getDice().keepPlaying())
+      return this.currentPlayer;
+
     if (this.playersIterator == null || !this.playersIterator.hasNext())
       this.playersIterator = this.players.iterator();
 
@@ -55,26 +55,30 @@ public class BackgammonGame extends Game {
   }
 
   public int getNextPossiblePositionOnLeft(final int currentPosition, final Color color, final int selectedCheckerPosition) {
-	  return ((BackgammonRules) this.rules).getNextPossiblePositionOnLeft(this.board, currentPlayer, ((BackgammonBoard) this.board).getColumn(currentPosition), ((BackgammonBoard) this.board).getColumn(selectedCheckerPosition));
-  }
-  
-  public int getNextPossiblePositionOnRight(final int currentPosition, final Color color, final int selectedCheckerPosition) {
-    return ((BackgammonRules) this.rules).getNextPossiblePositionOnRight(this.board, currentPlayer, ((BackgammonBoard) this.board).getColumn(currentPosition), ((BackgammonBoard) this.board).getColumn(selectedCheckerPosition));
-  }
-  
-  public int getNextPossiblePositionUpward(final int currentPosition, final Color color, final int selectedCheckerPosition) {
-    return ((BackgammonRules) this.rules).getNextPossiblePositionUpward(this.board, currentPlayer, ((BackgammonBoard) this.board).getColumn(currentPosition), ((BackgammonBoard) this.board).getColumn(selectedCheckerPosition));
-  }
-  
-  public int getNextPossiblePositionDownward(final int currentPosition, final Color color, final int selectedCheckerPosition) {
-    return ((BackgammonRules) this.rules).getNextPossiblePositionDownward(this.board, currentPlayer, ((BackgammonBoard) this.board).getColumn(currentPosition), ((BackgammonBoard) this.board).getColumn(selectedCheckerPosition));
+    return ((BackgammonRules) this.rules).getNextPossiblePositionOnLeft(this.board, this.currentPlayer,
+        ((BackgammonBoard) this.board).getColumn(currentPosition), ((BackgammonBoard) this.board).getColumn(selectedCheckerPosition));
   }
 
-  public void move(int cursorSelectedPosition, int cursorPosition) {
-	board.move(new BackgammonMove(((BackgammonBoard) board).getColumn(cursorSelectedPosition),
-								 ((BackgammonBoard) board).getColumn(cursorPosition)));
-	display.update(this);
-	nextTurn();
+  public int getNextPossiblePositionOnRight(final int currentPosition, final Color color, final int selectedCheckerPosition) {
+    return ((BackgammonRules) this.rules).getNextPossiblePositionOnRight(this.board, this.currentPlayer,
+        ((BackgammonBoard) this.board).getColumn(currentPosition), ((BackgammonBoard) this.board).getColumn(selectedCheckerPosition));
+  }
+
+  public int getNextPossiblePositionUpward(final int currentPosition, final Color color, final int selectedCheckerPosition) {
+    return ((BackgammonRules) this.rules).getNextPossiblePositionUpward(this.board, this.currentPlayer,
+        ((BackgammonBoard) this.board).getColumn(currentPosition), ((BackgammonBoard) this.board).getColumn(selectedCheckerPosition));
+  }
+
+  public int getNextPossiblePositionDownward(final int currentPosition, final Color color, final int selectedCheckerPosition) {
+    return ((BackgammonRules) this.rules).getNextPossiblePositionDownward(this.board, this.currentPlayer,
+        ((BackgammonBoard) this.board).getColumn(currentPosition), ((BackgammonBoard) this.board).getColumn(selectedCheckerPosition));
+  }
+
+  public void move(final int cursorSelectedPosition, final int cursorPosition) {
+    this.board.move(new BackgammonMove(((BackgammonBoard) this.board).getColumn(cursorSelectedPosition),
+        ((BackgammonBoard) this.board).getColumn(cursorPosition)));
+    this.display.update(this);
+    nextTurn();
   }
 
   // @Override

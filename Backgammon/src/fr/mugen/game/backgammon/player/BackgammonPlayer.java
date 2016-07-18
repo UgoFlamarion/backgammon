@@ -13,8 +13,8 @@ public abstract class BackgammonPlayer extends Player {
     this.color = color;
   }
 
-	public Color getColor() {
-		return color;
-	}
+  public Color getColor() {
+    return this.color;
+  }
 
 }

@@ -62,16 +62,16 @@ public class BackgammonBoard implements Board {
   }
 
   @Override
-  public void move(Move move) {
-	BackgammonColumn from = ((BackgammonMove) move).getFrom();
-	BackgammonColumn to = ((BackgammonMove) move).getTo();
-	
-	dice.consume(Math.abs(from.getPosition() - to.getPosition()));
-	from.decreaseNumber();
+  public void move(final Move move) {
+    final BackgammonColumn from = ((BackgammonMove) move).getFrom();
+    final BackgammonColumn to = ((BackgammonMove) move).getTo();
+
+    this.dice.consume(Math.abs(from.getPosition() - to.getPosition()));
+    from.decreaseNumber();
     to.increaseNumber();
-    
+
     if (from.getNumber() == 0)
-    	from.setColor(Color.NONE);
+      from.setColor(Color.NONE);
     to.setColor(from.getColor());
   }
 

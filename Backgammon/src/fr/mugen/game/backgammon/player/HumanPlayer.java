@@ -18,10 +18,10 @@ public class HumanPlayer extends BackgammonPlayer {
   @Override
   public void play(final Board board, final Rules rules, final Display display) {
     final Dice dice = ((BackgammonBoard) board).getDice();
-    
+
     if (!dice.keepPlaying())
-    	dice.roll();
-    
+      dice.roll();
+
     ((JavaFXDisplay) display).showDice(dice);
 
     this.controls.enable();

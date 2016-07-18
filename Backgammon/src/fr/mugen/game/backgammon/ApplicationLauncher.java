@@ -35,7 +35,8 @@ public class ApplicationLauncher extends Application {
     final JavaFXDisplay display = new JavaFXDisplay(this.root);
     final Controls controls = new JavaFXControls(display);
     final BackgammonGame game = new BackgammonGame(new BackgammonBoard(),
-        Arrays.asList((Player) new HumanPlayer(controls, Color.WHITE), (Player) new HumanPlayer(controls, Color.BLACK)), new BackgammonRules(), display);
+        Arrays.asList((Player) new HumanPlayer(controls, Color.WHITE), (Player) new HumanPlayer(controls, Color.BLACK)),
+        new BackgammonRules(), display);
 
     game.start();
   }
