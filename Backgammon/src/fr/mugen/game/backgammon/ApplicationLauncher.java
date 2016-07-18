@@ -2,6 +2,7 @@ package fr.mugen.game.backgammon;
 
 import java.util.Arrays;
 
+import fr.mugen.game.backgammon.BackgammonColumn.Color;
 import fr.mugen.game.backgammon.controls.JavaFXControls;
 import fr.mugen.game.backgammon.display.JavaFXDisplay;
 import fr.mugen.game.backgammon.player.HumanPlayer;
@@ -34,7 +35,7 @@ public class ApplicationLauncher extends Application {
     final JavaFXDisplay display = new JavaFXDisplay(this.root);
     final Controls controls = new JavaFXControls(display);
     final BackgammonGame game = new BackgammonGame(new BackgammonBoard(),
-        Arrays.asList((Player) new HumanPlayer(controls, true), (Player) new HumanPlayer(controls, false)), new BackgammonRules(), display);
+        Arrays.asList((Player) new HumanPlayer(controls, Color.WHITE), (Player) new HumanPlayer(controls, Color.BLACK)), new BackgammonRules(), display);
 
     game.start();
   }

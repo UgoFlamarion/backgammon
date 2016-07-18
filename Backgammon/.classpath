@@ -12,17 +12,14 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Users/UgoShifu/Documents/Lib/lwjgl/native"/>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
-	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Backgammon">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="BG/lib"/>
-		</attributes>
+		<accessrules>
+			<accessrule kind="accessible" pattern="**"/>
+		</accessrules>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/gravity-pangolin/libs/gdx.jar" sourcepath="/gravity-pangolin/libs/gdx-sources.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

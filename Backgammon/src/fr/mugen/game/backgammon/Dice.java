@@ -5,11 +5,15 @@ public class Dice {
   private int dice1;
   private int dice2;
   private int range;
+  private boolean doubleDice;
 
   public void roll() {
     this.dice1 = (int) (Math.random() * 10 % 6 + 1);
     this.dice2 = (int) (Math.random() * 10 % 6 + 1);
-    this.range = this.dice1 + this.dice2 * (this.dice1 == this.dice2 ? 2 : 1);
+    this.doubleDice = this.dice1 == this.dice2;
+    this.range = this.dice1 + this.dice2 * (doubleDice ? 2 : 1);
+    System.out.println("DOUBLE DICE : " + doubleDice);
+    System.out.println("RANGE : " + range);
   }
 
   public boolean keepPlaying() {
@@ -23,7 +27,7 @@ public class Dice {
       this.dice1 = this.dice1 == moveLength ? 0 : this.dice1;
       this.dice2 = this.dice2 == moveLength ? 0 : this.dice2;
     }
-
+    
     this.range -= moveLength;
   }
 
@@ -37,6 +41,10 @@ public class Dice {
 
   public int getDice2() {
     return this.dice2;
+  }
+  
+  public boolean isDoubleDice() {
+	  return doubleDice;
   }
 
 }

@@ -19,9 +19,11 @@ public class JavaFXUtils {
   }
 
   public static int getCursorY(final int position) {
-    if (position <= 12)
-      return JavaFXDisplay.CURSORY_LINE1;
-    return JavaFXDisplay.CURSORY_LINE2;
+    return position <= 12 ? JavaFXDisplay.CURSORY_LINE1 : JavaFXDisplay.CURSORY_LINE2;
+  }
+
+  public static double getScaleY(int position) {
+	return position <= 12 ? 1 : -1;
   }
 
 }

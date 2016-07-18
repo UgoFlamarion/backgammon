@@ -3,7 +3,9 @@ package fr.mugen.game.backgammon.display;
 import fr.mugen.game.backgammon.BackgammonBoard;
 import fr.mugen.game.backgammon.BackgammonColumn;
 import fr.mugen.game.backgammon.BackgammonGame;
+import fr.mugen.game.backgammon.BackgammonMove;
 import fr.mugen.game.backgammon.Dice;
+import fr.mugen.game.backgammon.BackgammonColumn.Color;
 import fr.mugen.game.backgammon.player.BackgammonPlayer;
 import fr.mugen.game.backgammon.utils.JavaFXUtils;
 import fr.mugen.game.framework.Display;
@@ -77,15 +79,17 @@ public class JavaFXDisplay implements Display {
 
   @Override
   public void update(final Game game) {
-    if (this.game != game)
-      this.game = (BackgammonGame) game;
+	// Clear root Pane
+	root.getChildren().clear();
+	  
+    this.game = (BackgammonGame) game;
 
     showCheckers(this.game);
   }
 
-  private ImageView getCheckerImageView(final boolean white) {
+  private ImageView getCheckerImageView(final Color color) {
     final ImageView checker = new ImageView();
-    checker.setImage(white ? this.whiteCheckerImage : this.blackCheckerImage);
+    checker.setImage(Color.WHITE.equals(color) ? this.whiteCheckerImage : this.blackCheckerImage);
 
     return checker;
   }
@@ -94,17 +98,11 @@ public class JavaFXDisplay implements Display {
     for (final BackgammonColumn column : ((BackgammonBoard) game.getBoard()).getColumns()) {
       final int position = column.getPosition();
       for (int i = 0; i < column.getNumber(); i++) {
-        final ImageView checker = getCheckerImageView(column.isWhite());
+        final ImageView checker = getCheckerImageView(column.getColor());
 
-        final int x = JavaFXUtils.getCheckerX(position);
-        final int y = JavaFXUtils.getCheckerY(position, i);
+        checker.setX(JavaFXUtils.getCheckerX(position));
+        checker.setY(JavaFXUtils.getCheckerY(position, i));
 
-        checker.setX(position <= 12 ? x : this.root.getWidth() - x - JavaFXDisplay.CHECKER_IMAGE_SIZE);
-        checker.setY(y);
-
-        // System.out
-        // .println((column.isWhite() ? "WHITE" : "BLACK") + " (" + position +
-        // ") X = " + checker.getX() + " : Y = " + checker.getY());
         this.root.getChildren().add(checker);
       }
     }
@@ -123,9 +121,10 @@ public class JavaFXDisplay implements Display {
   }
 
   public void showCursor() {
-    this.cursorPosition = this.game.getPlayersDefaultPosition(((BackgammonPlayer) this.game.getCurrentPlayer()).isWhite());
+    this.cursorPosition = this.game.getPlayersDefaultPosition(((BackgammonPlayer) this.game.getCurrentPlayer()).getColor());
     this.cursorImageView.setX(JavaFXUtils.getCursorX(this.cursorPosition));
     this.cursorImageView.setY(JavaFXUtils.getCursorY(this.cursorPosition));
+    this.cursorImageView.setScaleY(JavaFXUtils.getScaleY(this.cursorPosition));
     this.root.getChildren().add(this.cursorImageView);
   }
 
@@ -134,35 +133,37 @@ public class JavaFXDisplay implements Display {
   }
 
   public void left() {
-    if (this.cursorPosition != 1 && this.cursorPosition != 24) {
-      // this.cursorPosition -= this.cursorPosition <= 12 ? 1 : -1;
       this.cursorPosition = this.game.getNextPossiblePositionOnLeft(this.cursorPosition,
-          ((BackgammonPlayer) this.game.getCurrentPlayer()).isWhite());
+          ((BackgammonPlayer) this.game.getCurrentPlayer()).getColor(), cursorSelectedPosition);
       this.cursorImageView.setX(JavaFXUtils.getCursorX(this.cursorPosition));
-    }
+      this.cursorImageView.setY(JavaFXUtils.getCursorY(this.cursorPosition));
+    System.out.println("POSITION = " + cursorPosition);
   }
 
   public void right() {
-    if (this.cursorPosition != 12 && this.cursorPosition != 13) {
-      this.cursorPosition += this.cursorPosition <= 12 ? 1 : -1;
+	  this.cursorPosition = this.game.getNextPossiblePositionOnRight(this.cursorPosition,
+	       ((BackgammonPlayer) this.game.getCurrentPlayer()).getColor(), cursorSelectedPosition);
       this.cursorImageView.setX(JavaFXUtils.getCursorX(this.cursorPosition));
-    }
+      this.cursorImageView.setY(JavaFXUtils.getCursorY(this.cursorPosition));
+    System.out.println("POSITION = " + cursorPosition);
   }
 
   public void up() {
-    if (this.cursorPosition > 12) {
-      this.cursorPosition -= (this.cursorPosition - 12) * 2 - 1;
+	  this.cursorPosition = this.game.getNextPossiblePositionUpward(this.cursorPosition,
+    	   ((BackgammonPlayer) this.game.getCurrentPlayer()).getColor(), cursorSelectedPosition);
+	  this.cursorImageView.setX(JavaFXUtils.getCursorX(this.cursorPosition));
       this.cursorImageView.setY(JavaFXUtils.getCursorY(this.cursorPosition));
-      this.cursorImageView.setScaleY(1);
-    }
+      this.cursorImageView.setScaleY(JavaFXUtils.getScaleY(this.cursorPosition));
+    System.out.println("POSITION = " + cursorPosition);
   }
 
   public void down() {
-    if (this.cursorPosition <= 12) {
-      this.cursorPosition += (12 - this.cursorPosition) * 2 + 1;
+	  this.cursorPosition = this.game.getNextPossiblePositionDownward(this.cursorPosition,
+    	   ((BackgammonPlayer) this.game.getCurrentPlayer()).getColor(), cursorSelectedPosition);
+	  this.cursorImageView.setX(JavaFXUtils.getCursorX(this.cursorPosition));
       this.cursorImageView.setY(JavaFXUtils.getCursorY(this.cursorPosition));
-      this.cursorImageView.setScaleY(-1);
-    }
+      this.cursorImageView.setScaleY(JavaFXUtils.getScaleY(this.cursorPosition));
+    System.out.println("POSITION = " + cursorPosition);
   }
 
   public void select() {
@@ -171,15 +172,20 @@ public class JavaFXDisplay implements Display {
       this.cursorSelectedPosition = 0;
       return;
     }
-
-    this.cursorSelectedImageView.setX(this.cursorImageView.getX());
-    this.cursorSelectedImageView.setY(this.cursorImageView.getY());
-    this.cursorSelectedImageView.setScaleY(this.cursorImageView.getScaleY());
-
-    if (!this.root.getChildren().contains(this.cursorSelectedImageView))
-      this.root.getChildren().add(this.cursorSelectedImageView);
-
-    this.cursorSelectedPosition = this.cursorPosition;
+    else if (cursorSelectedPosition != 0) {     // Move checker
+      game.move(cursorSelectedPosition, cursorPosition);
+      this.cursorSelectedPosition = 0;
+    }
+    else {
+	    this.cursorSelectedImageView.setX(this.cursorImageView.getX());
+	    this.cursorSelectedImageView.setY(this.cursorImageView.getY());
+	    this.cursorSelectedImageView.setScaleY(this.cursorImageView.getScaleY());
+	
+	    if (!this.root.getChildren().contains(this.cursorSelectedImageView))
+	      this.root.getChildren().add(this.cursorSelectedImageView);
+	
+	    this.cursorSelectedPosition = this.cursorPosition;
+    }
   }
 
 }

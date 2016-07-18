@@ -3,6 +3,7 @@ package fr.mugen.game.backgammon;
 import java.util.Iterator;
 import java.util.List;
 
+import fr.mugen.game.backgammon.BackgammonColumn.Color;
 import fr.mugen.game.framework.Board;
 import fr.mugen.game.framework.Display;
 import fr.mugen.game.framework.Game;
@@ -36,6 +37,9 @@ public class BackgammonGame extends Game {
   }
 
   protected Player nextPlayer() {
+	if (((BackgammonBoard) board).getDice().keepPlaying())
+		return currentPlayer;
+	  
     if (this.playersIterator == null || !this.playersIterator.hasNext())
       this.playersIterator = this.players.iterator();
 
@@ -46,12 +50,31 @@ public class BackgammonGame extends Game {
     return this.currentPlayer;
   }
 
-  public int getPlayersDefaultPosition(final boolean white) {
-    return ((BackgammonRules) this.rules).getPlayersDefaultPosition(this.board, white);
+  public int getPlayersDefaultPosition(final Color color) {
+    return ((BackgammonRules) this.rules).getPlayersDefaultPosition(this.board, color);
   }
 
-  public int getNextPossiblePositionOnLeft(final int position, final boolean white) {
-    return ((BackgammonRules) this.rules).getNextPossiblePositionOnLeft(this.board, position, white);
+  public int getNextPossiblePositionOnLeft(final int currentPosition, final Color color, final int selectedCheckerPosition) {
+	  return ((BackgammonRules) this.rules).getNextPossiblePositionOnLeft(this.board, currentPlayer, ((BackgammonBoard) this.board).getColumn(currentPosition), ((BackgammonBoard) this.board).getColumn(selectedCheckerPosition));
+  }
+  
+  public int getNextPossiblePositionOnRight(final int currentPosition, final Color color, final int selectedCheckerPosition) {
+    return ((BackgammonRules) this.rules).getNextPossiblePositionOnRight(this.board, currentPlayer, ((BackgammonBoard) this.board).getColumn(currentPosition), ((BackgammonBoard) this.board).getColumn(selectedCheckerPosition));
+  }
+  
+  public int getNextPossiblePositionUpward(final int currentPosition, final Color color, final int selectedCheckerPosition) {
+    return ((BackgammonRules) this.rules).getNextPossiblePositionUpward(this.board, currentPlayer, ((BackgammonBoard) this.board).getColumn(currentPosition), ((BackgammonBoard) this.board).getColumn(selectedCheckerPosition));
+  }
+  
+  public int getNextPossiblePositionDownward(final int currentPosition, final Color color, final int selectedCheckerPosition) {
+    return ((BackgammonRules) this.rules).getNextPossiblePositionDownward(this.board, currentPlayer, ((BackgammonBoard) this.board).getColumn(currentPosition), ((BackgammonBoard) this.board).getColumn(selectedCheckerPosition));
+  }
+
+  public void move(int cursorSelectedPosition, int cursorPosition) {
+	board.move(new BackgammonMove(((BackgammonBoard) board).getColumn(cursorSelectedPosition),
+								 ((BackgammonBoard) board).getColumn(cursorPosition)));
+	display.update(this);
+	nextTurn();
   }
 
   // @Override

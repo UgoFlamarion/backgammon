@@ -1,1 +1,0 @@
-LWJGL @{title} 3.0.1 SNAPSHOT build 9

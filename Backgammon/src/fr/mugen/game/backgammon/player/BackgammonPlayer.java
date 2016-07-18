@@ -1,19 +1,20 @@
 package fr.mugen.game.backgammon.player;
 
+import fr.mugen.game.backgammon.BackgammonColumn.Color;
 import fr.mugen.game.framework.Controls;
 import fr.mugen.game.framework.Player;
 
 public abstract class BackgammonPlayer extends Player {
 
-  protected final boolean white;
+  protected final Color color;
 
-  public BackgammonPlayer(final Controls controls, final boolean white) {
+  public BackgammonPlayer(final Controls controls, final Color color) {
     super(controls);
-    this.white = white;
+    this.color = color;
   }
 
-  public boolean isWhite() {
-    return this.white;
-  }
+	public Color getColor() {
+		return color;
+	}
 
 }

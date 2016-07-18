@@ -2,23 +2,27 @@ package fr.mugen.game.backgammon;
 
 public class BackgammonColumn {
 
-	private boolean white;
+	public enum Color {
+		WHITE, BLACK, NONE
+	}
+	
+	private Color color;
 	private int number;
 	private int position;
 
 	public BackgammonColumn(int position) {
 		this.position = position;
-		this.white = true;
+		this.color = Color.NONE;
 	}
 	
-	public boolean isWhite() {
-		return white;
+	public Color getColor() {
+		return color;
 	}
 
-	public void setWhite(boolean white) {
-		this.white = white;
+	public void setColor(Color color) {
+		this.color = color;
 	}
-	
+
 	public int getNumber() {
 		return number;
 	}
@@ -37,6 +41,11 @@ public class BackgammonColumn {
 
 	public int getPosition() {
 		return position;
+	}
+	
+	@Override
+	public String toString() {
+		return position + " - " + color.name() + " - " + number + " checkers";
 	}
 
 }
