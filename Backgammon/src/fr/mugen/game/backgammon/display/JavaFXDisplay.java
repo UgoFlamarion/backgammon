@@ -1,5 +1,7 @@
 package fr.mugen.game.backgammon.display;
 
+import java.net.URISyntaxException;
+
 import fr.mugen.game.backgammon.BackgammonBoard;
 import fr.mugen.game.backgammon.BackgammonColumn;
 import fr.mugen.game.backgammon.BackgammonColumn.Color;
@@ -12,6 +14,8 @@ import fr.mugen.game.framework.Game;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 
 public class JavaFXDisplay implements Display {
 
@@ -41,6 +45,8 @@ public class JavaFXDisplay implements Display {
 
   public final static int  CHECKER_IMAGE_SIZE = 50;
 
+  // public final static int DEAD_CHECKERX = 32
+
   private final Image      blackCheckerImage;
   private final Image      whiteCheckerImage;
 
@@ -62,7 +68,13 @@ public class JavaFXDisplay implements Display {
   private int              cursorPosition;
   private int              cursorSelectedPosition;
 
-  public JavaFXDisplay(final Pane root) {
+  /*
+   * Sounds
+   */
+
+  private final Media      diceRolling;
+
+  public JavaFXDisplay(final Pane root) throws URISyntaxException {
     this.root = root;
 
     JavaFXDisplay.WIDTH = root.getWidth();
@@ -74,6 +86,8 @@ public class JavaFXDisplay implements Display {
     this.cursorSelectedImageView = new ImageView(new Image("img/cursor_blue.png"));
 
     this.diceSprite = new DiceSprite();
+
+    this.diceRolling = new Media(getClass().getClassLoader().getResource("sound/roll.wav").toURI().toString());
   }
 
   @Override
@@ -83,7 +97,8 @@ public class JavaFXDisplay implements Display {
 
     this.game = (BackgammonGame) game;
 
-    showCheckers(this.game);
+    showCheckers();
+    showCemeteries();
   }
 
   private ImageView getCheckerImageView(final Color color) {
@@ -93,8 +108,8 @@ public class JavaFXDisplay implements Display {
     return checker;
   }
 
-  private void showCheckers(final BackgammonGame game) {
-    for (final BackgammonColumn column : ((BackgammonBoard) game.getBoard()).getColumns()) {
+  private void showCheckers() {
+    for (final BackgammonColumn column : ((BackgammonBoard) this.game.getBoard()).getColumns()) {
       final int position = column.getPosition();
       for (int i = 0; i < column.getNumber(); i++) {
         final ImageView checker = getCheckerImageView(column.getColor());
@@ -121,10 +136,28 @@ public class JavaFXDisplay implements Display {
 
   public void showCursor() {
     this.cursorPosition = this.game.getPlayersDefaultPosition(((BackgammonPlayer) this.game.getCurrentPlayer()).getColor());
-    this.cursorImageView.setX(JavaFXUtils.getCursorX(this.cursorPosition));
-    this.cursorImageView.setY(JavaFXUtils.getCursorY(this.cursorPosition));
-    this.cursorImageView.setScaleY(JavaFXUtils.getScaleY(this.cursorPosition));
+    updateCursorPosition();
     this.root.getChildren().add(this.cursorImageView);
+  }
+
+  public void showCemeteries() {
+    this.game.getPlayers().stream().forEach(c -> {
+      final BackgammonPlayer player = (BackgammonPlayer) c;
+      for (int i = 0; i < player.getDeads(); i++) {
+        final ImageView checker = getCheckerImageView(player.getColor());
+
+        checker.setX(player.getColor() == Color.WHITE ? 0 : JavaFXDisplay.WIDTH - JavaFXDisplay.BORDERX);
+        checker.setY(JavaFXDisplay.BORDERY * 2 + i * JavaFXDisplay.CHECKER_GAPY);
+
+        this.root.getChildren().add(checker);
+      }
+
+    });
+  }
+
+  public void playRollingDiceSound() {
+    final MediaPlayer mediaPlayer = new MediaPlayer(this.diceRolling);
+    mediaPlayer.play();
   }
 
   public Pane getRoot() {
@@ -134,35 +167,35 @@ public class JavaFXDisplay implements Display {
   public void left() {
     this.cursorPosition = this.game.getNextPossiblePositionOnLeft(this.cursorPosition,
         ((BackgammonPlayer) this.game.getCurrentPlayer()).getColor(), this.cursorSelectedPosition);
-    this.cursorImageView.setX(JavaFXUtils.getCursorX(this.cursorPosition));
-    this.cursorImageView.setY(JavaFXUtils.getCursorY(this.cursorPosition));
+    updateCursorPosition();
     System.out.println("POSITION = " + this.cursorPosition);
   }
 
   public void right() {
     this.cursorPosition = this.game.getNextPossiblePositionOnRight(this.cursorPosition,
         ((BackgammonPlayer) this.game.getCurrentPlayer()).getColor(), this.cursorSelectedPosition);
-    this.cursorImageView.setX(JavaFXUtils.getCursorX(this.cursorPosition));
-    this.cursorImageView.setY(JavaFXUtils.getCursorY(this.cursorPosition));
+    updateCursorPosition();
     System.out.println("POSITION = " + this.cursorPosition);
   }
 
   public void up() {
     this.cursorPosition = this.game.getNextPossiblePositionUpward(this.cursorPosition,
         ((BackgammonPlayer) this.game.getCurrentPlayer()).getColor(), this.cursorSelectedPosition);
-    this.cursorImageView.setX(JavaFXUtils.getCursorX(this.cursorPosition));
-    this.cursorImageView.setY(JavaFXUtils.getCursorY(this.cursorPosition));
-    this.cursorImageView.setScaleY(JavaFXUtils.getScaleY(this.cursorPosition));
+    updateCursorPosition();
     System.out.println("POSITION = " + this.cursorPosition);
   }
 
   public void down() {
     this.cursorPosition = this.game.getNextPossiblePositionDownward(this.cursorPosition,
         ((BackgammonPlayer) this.game.getCurrentPlayer()).getColor(), this.cursorSelectedPosition);
+    updateCursorPosition();
+    System.out.println("POSITION = " + this.cursorPosition);
+  }
+
+  private void updateCursorPosition() {
     this.cursorImageView.setX(JavaFXUtils.getCursorX(this.cursorPosition));
     this.cursorImageView.setY(JavaFXUtils.getCursorY(this.cursorPosition));
     this.cursorImageView.setScaleY(JavaFXUtils.getScaleY(this.cursorPosition));
-    System.out.println("POSITION = " + this.cursorPosition);
   }
 
   public void select() {

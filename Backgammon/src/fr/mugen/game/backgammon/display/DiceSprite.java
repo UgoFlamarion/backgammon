@@ -52,7 +52,7 @@ public class DiceSprite {
   public ImageView getImageView(final int number) {
     final Face face = Face.getFace(number);
     if (face == null)
-      return null;
+      return new ImageView();
 
     final ImageView imageView = new ImageView(this.diceImage);
     imageView.setViewport(new Rectangle2D(face.posX, face.posY, DiceSprite.SIZEX, DiceSprite.SIZEY));

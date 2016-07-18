@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import fr.mugen.game.backgammon.BackgammonColumn.Color;
+import fr.mugen.game.backgammon.player.BackgammonPlayer;
 import fr.mugen.game.framework.Board;
 import fr.mugen.game.framework.Display;
 import fr.mugen.game.framework.Game;
@@ -75,8 +76,17 @@ public class BackgammonGame extends Game {
   }
 
   public void move(final int cursorSelectedPosition, final int cursorPosition) {
-    this.board.move(new BackgammonMove(((BackgammonBoard) this.board).getColumn(cursorSelectedPosition),
-        ((BackgammonBoard) this.board).getColumn(cursorPosition)));
+    final BackgammonColumn from = ((BackgammonBoard) this.board).getColumn(cursorSelectedPosition);
+    final BackgammonColumn to = ((BackgammonBoard) this.board).getColumn(cursorPosition);
+    final BackgammonMove move = ((BackgammonRules) this.rules).getMove(from, to);
+
+    if (move.isEating()) {
+      to.decreaseNumber();
+      ((BackgammonPlayer) this.players.stream().filter(p -> ((BackgammonPlayer) p).getColor() == to.getColor()).findFirst().get())
+          .increaseDeads();
+    }
+
+    this.board.move(move);
     this.display.update(this);
     nextTurn();
   }

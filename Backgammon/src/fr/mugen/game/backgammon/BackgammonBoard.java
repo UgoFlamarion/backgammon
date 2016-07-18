@@ -70,9 +70,9 @@ public class BackgammonBoard implements Board {
     from.decreaseNumber();
     to.increaseNumber();
 
+    to.setColor(from.getColor());
     if (from.getNumber() == 0)
       from.setColor(Color.NONE);
-    to.setColor(from.getColor());
   }
 
 }

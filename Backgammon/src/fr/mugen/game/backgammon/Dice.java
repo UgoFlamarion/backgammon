@@ -11,7 +11,8 @@ public class Dice {
     this.dice1 = (int) (Math.random() * 10 % 6 + 1);
     this.dice2 = (int) (Math.random() * 10 % 6 + 1);
     this.doubleDice = this.dice1 == this.dice2;
-    this.range = this.dice1 + this.dice2 * (this.doubleDice ? 2 : 1);
+    this.range = (this.dice1 + this.dice2) * (this.doubleDice ? 2 : 1);
+
     System.out.println("DOUBLE DICE : " + this.doubleDice);
     System.out.println("RANGE : " + this.range);
   }
@@ -21,14 +22,15 @@ public class Dice {
   }
 
   public void consume(final int moveLength) {
-    // System.out.println("RANGE : " + range);
-    // System.out.println("CONSUME : " + moveLength);
     if (this.dice1 != this.dice2) {
       this.dice1 = this.dice1 == moveLength ? 0 : this.dice1;
       this.dice2 = this.dice2 == moveLength ? 0 : this.dice2;
     }
 
     this.range -= moveLength;
+
+    System.out.println("CONSUME : " + moveLength);
+    System.out.println("RANGE : " + this.range);
   }
 
   public int getRange() {

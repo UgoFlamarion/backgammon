@@ -19,8 +19,10 @@ public class HumanPlayer extends BackgammonPlayer {
   public void play(final Board board, final Rules rules, final Display display) {
     final Dice dice = ((BackgammonBoard) board).getDice();
 
-    if (!dice.keepPlaying())
+    if (!dice.keepPlaying()) {
       dice.roll();
+      ((JavaFXDisplay) display).playRollingDiceSound();
+    }
 
     ((JavaFXDisplay) display).showDice(dice);
 
