@@ -2,3 +2,15 @@
     -fx-background-image: url("../img/board.png");
     -fx-background-repeat: stretch;
 }
+
+.deadCount {
+	-fx-font-size: 20;
+}
+
+.deadCount.WHITE {
+	-fx-fill: black;
+}
+
+.deadCount.BLACK {
+	-fx-fill: white;
+}

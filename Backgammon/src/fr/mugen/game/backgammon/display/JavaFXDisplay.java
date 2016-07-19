@@ -16,6 +16,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 public class JavaFXDisplay implements Display {
 
@@ -44,6 +47,8 @@ public class JavaFXDisplay implements Display {
   public final static int  GAPY               = 530;
 
   public final static int  CHECKER_IMAGE_SIZE = 50;
+  
+  public final static int  CEMETERY_GAPY = 50;
 
   // public final static int DEAD_CHECKERX = 32
 
@@ -143,13 +148,26 @@ public class JavaFXDisplay implements Display {
   public void showCemeteries() {
     this.game.getPlayers().stream().forEach(c -> {
       final BackgammonPlayer player = (BackgammonPlayer) c;
-      for (int i = 0; i < player.getDeads(); i++) {
+      if (player.getDeads() > 0) {
         final ImageView checker = getCheckerImageView(player.getColor());
 
-        checker.setX(player.getColor() == Color.WHITE ? 0 : JavaFXDisplay.WIDTH - JavaFXDisplay.BORDERX);
-        checker.setY(JavaFXDisplay.BORDERY * 2 + i * JavaFXDisplay.CHECKER_GAPY);
+        int sideFactor = player.getColor() == Color.WHITE ? -1 : 1;
+        double x = (JavaFXDisplay.WIDTH / 2) - (CHECKER_IMAGE_SIZE / 2);
+		double y = (HEIGHT / 2) - CHECKER_IMAGE_SIZE + CEMETERY_GAPY * sideFactor;
+        
+		checker.setX(x);
+		checker.setY(y);
 
+        Text text = new Text();
+		text.getStyleClass().add("deadCount");
+		System.out.println(player.getColor().name());
+		text.getStyleClass().add(player.getColor().name());
+        text.setText("X" + player.getDeads());
+        text.setX(x + (CHECKER_IMAGE_SIZE / 2) - (text.getLayoutBounds().getWidth() / 2));
+        text.setY(y + (CHECKER_IMAGE_SIZE / 2) + (text.getLayoutBounds().getHeight() / 2));
+        
         this.root.getChildren().add(checker);
+        this.root.getChildren().add(text);
       }
 
     });
