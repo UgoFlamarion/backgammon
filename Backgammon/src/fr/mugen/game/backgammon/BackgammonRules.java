@@ -19,10 +19,10 @@ public class BackgammonRules implements Rules {
     final BackgammonColumn from = backgammonMove.getFrom();
     final BackgammonColumn to = backgammonMove.getTo();
     final Color playerColor = ((BackgammonPlayer) player).getColor();
-    final int moveLength = Math.abs(from.getPosition() - to.getPosition());
+    final int moveLength = Math.abs((from.getPosition() > 0 ? from.getPosition() : 0) - to.getPosition());
 
     // Unselect case
-    if (from.equals(to))
+    if (to.getPosition() > 0 && from.equals(to))
       return true;
 
     return from.getColor() == playerColor && from.getNumber() > 0
@@ -30,7 +30,8 @@ public class BackgammonRules implements Rules {
         && (Color.WHITE.equals(playerColor) && from.getPosition() - to.getPosition() > 0
             || Color.BLACK.equals(playerColor) && from.getPosition() - to.getPosition() < 0)
         && (dice.getDice1() == moveLength || dice.getDice2() == moveLength || moveLength == dice.getRange()
-            || dice.isDoubleDice() && moveLength % dice.getDice1() == 0 && moveLength <= dice.getRange());
+            || dice.isDoubleDice() && moveLength % dice.getDice1() == 0 && moveLength <= dice.getRange())
+        && to.getPosition() > 0;
   }
 
   public BackgammonMove getMove(final BackgammonColumn from, final BackgammonColumn to) {
@@ -41,8 +42,8 @@ public class BackgammonRules implements Rules {
     return column.getColor() == player.getColor() && column.getNumber() > 0;
   }
 
-  public int getPlayersDefaultPosition(final Board board, final Color color) {
-    return ((BackgammonBoard) board).getColumns().stream().filter(p -> p.getColor().equals(color)).findFirst().get().getPosition();
+  public int getCursorDefaultPosition(final Board board, final Color color) {
+    return ((BackgammonBoard) board).getColumns().stream().filter(p -> p.getColor().equals(color) && p.getNumber() > 0 && p.getPosition() > 0).findFirst().get().getPosition();
   }
 
   public int getNextPossiblePositionOnLeft(final Board board, final Player player, final BackgammonColumn currentColumn,

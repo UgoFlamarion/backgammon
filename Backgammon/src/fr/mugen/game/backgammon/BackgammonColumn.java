@@ -13,8 +13,12 @@ public class BackgammonColumn {
   private final int position;
 
   public BackgammonColumn(final int position) {
+    this(position, Color.NONE);
+  }
+  
+  public BackgammonColumn(final int position, Color color) {
     this.position = position;
-    this.color = Color.NONE;
+    this.color = color;
   }
 
   public Color getColor() {

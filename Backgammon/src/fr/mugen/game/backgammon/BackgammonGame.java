@@ -12,7 +12,7 @@ import fr.mugen.game.framework.Player;
 import fr.mugen.game.framework.Rules;
 
 public class BackgammonGame extends Game {
-
+	
   protected Iterator<Player> playersIterator;
   protected Player           currentPlayer;
 
@@ -52,7 +52,7 @@ public class BackgammonGame extends Game {
   }
 
   public int getPlayersDefaultPosition(final Color color) {
-    return ((BackgammonRules) this.rules).getPlayersDefaultPosition(this.board, color);
+    return ((BackgammonRules) this.rules).getCursorDefaultPosition(this.board, color);
   }
 
   public int getNextPossiblePositionOnLeft(final int currentPosition, final Color color, final int selectedCheckerPosition) {
@@ -80,15 +80,12 @@ public class BackgammonGame extends Game {
     final BackgammonColumn to = ((BackgammonBoard) this.board).getColumn(cursorPosition);
     final BackgammonMove move = ((BackgammonRules) this.rules).getMove(from, to);
 
-    if (move.isEating()) {
-      to.decreaseNumber();
-      ((BackgammonPlayer) this.players.stream().filter(p -> ((BackgammonPlayer) p).getColor() == to.getColor()).findFirst().get())
-          .increaseDeads();
-    }
-
     this.board.move(move);
     this.display.update(this);
-    nextTurn();
+    
+    if (!nextTurn()) {
+    	gameIsOver = true;
+    }
   }
 
   // @Override

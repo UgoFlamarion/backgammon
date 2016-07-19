@@ -13,7 +13,7 @@ public class ComputerPlayer extends BackgammonPlayer {
   }
 
   @Override
-  public void play(final Board board, final Rules rules, final Display display) {
+  public void _play(final Board board, final Rules rules, final Display display) {
 
   }
 

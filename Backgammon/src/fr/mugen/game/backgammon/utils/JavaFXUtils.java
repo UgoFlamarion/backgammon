@@ -1,5 +1,6 @@
 package fr.mugen.game.backgammon.utils;
 
+import fr.mugen.game.backgammon.BackgammonBoard;
 import fr.mugen.game.backgammon.display.JavaFXDisplay;
 
 public class JavaFXUtils {
@@ -15,14 +16,20 @@ public class JavaFXUtils {
   }
 
   public static double getCursorX(final int position) {
+	if (position < 0)
+	  return (JavaFXDisplay.WIDTH / 2) - (JavaFXDisplay.CHECKER_IMAGE_SIZE / 2);
     return JavaFXUtils.getCheckerX(position);
   }
 
   public static int getCursorY(final int position) {
+    if (position < 0)
+	  return (int) ((JavaFXDisplay.HEIGHT / 2) - (position == BackgammonBoard.WHITE_CEMETERY_POSITION ? JavaFXDisplay.CEMETERY_GAPY : -JavaFXDisplay.CEMETERY_GAPY) * 3);
     return position <= 12 ? JavaFXDisplay.CURSORY_LINE1 : JavaFXDisplay.CURSORY_LINE2;
   }
 
   public static double getScaleY(final int position) {
+	if (position < 0)
+	  return (position == BackgammonBoard.WHITE_CEMETERY_POSITION ? -1 : 1);
     return position <= 12 ? 1 : -1;
   }
 
