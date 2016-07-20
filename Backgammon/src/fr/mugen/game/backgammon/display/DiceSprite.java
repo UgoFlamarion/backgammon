@@ -5,15 +5,16 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class DiceSprite {
+  private static final String DICE_SPRITE_IMG = "img/dice_sprite.png";
 
-  private final Image        diceImage;
+  private final Image         diceImage;
 
   /*
    * Constants
    */
 
-  public final static double SIZEX = 37.5;
-  public final static double SIZEY = 37.5;
+  public final static double  SIZEX           = 37.5;
+  public final static double  SIZEY           = 37.5;
 
   /*
    * Faces
@@ -46,7 +47,7 @@ public class DiceSprite {
   }
 
   public DiceSprite() {
-    this.diceImage = new Image("img/dice_sprite.png");
+    this.diceImage = new Image(DiceSprite.DICE_SPRITE_IMG);
   }
 
   public ImageView getImageView(final int number) {

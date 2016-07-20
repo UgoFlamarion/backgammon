@@ -15,7 +15,6 @@ public class JavaFXControls implements Controls {
 
   @Override
   public void enable() {
-    this.display.showCursor();
     this.display.getRoot().getScene().setOnKeyPressed(e -> {
       final String code = e.getCode().toString();
       switch (KeyCode.valueOf(code)) {

@@ -14,9 +14,13 @@ public class BackgammonBoard implements Board {
    * Constants
    */
 
-  public final static int WHITE_CEMETERY_POSITION = -1;
-  public final static int BLACK_CEMETERY_POSITION = -2;
-  
+  public final static int WHITE_CEMETERY_POSITION = 25;
+  public final static int BLACK_CEMETERY_POSITION = 0;
+
+  public static boolean IS_CEMETERY(final int position) {
+    return position == BackgammonBoard.WHITE_CEMETERY_POSITION || position == BackgammonBoard.BLACK_CEMETERY_POSITION;
+  }
+
   private final Map<Integer, BackgammonColumn> columns;
   private final Dice                           dice;
 
@@ -24,10 +28,10 @@ public class BackgammonBoard implements Board {
     this.columns = new HashMap<Integer, BackgammonColumn>();
     for (int i = 1; i <= 24; i++)
       this.columns.put(i, new BackgammonColumn(i));
-    
+
     // Add cemeteries
-    this.columns.put(WHITE_CEMETERY_POSITION, new BackgammonColumn(WHITE_CEMETERY_POSITION, Color.WHITE));
-    this.columns.put(BLACK_CEMETERY_POSITION, new BackgammonColumn(BLACK_CEMETERY_POSITION, Color.BLACK));
+    this.columns.put(BackgammonBoard.WHITE_CEMETERY_POSITION, new BackgammonColumn(BackgammonBoard.WHITE_CEMETERY_POSITION, Color.WHITE));
+    this.columns.put(BackgammonBoard.BLACK_CEMETERY_POSITION, new BackgammonColumn(BackgammonBoard.BLACK_CEMETERY_POSITION, Color.BLACK));
 
     // Initialize positions
     this.columns.get(1).setNumber(2);
@@ -80,14 +84,15 @@ public class BackgammonBoard implements Board {
 
     this.dice.consume(Math.abs(from.getPosition() - to.getPosition()));
     from.decreaseNumber();
-	to.increaseNumber();
+    to.increaseNumber();
 
-	// Send the dead checker to the cemetery
-	if (((BackgammonMove) move).isEating()) {
-		to.decreaseNumber();		
-		getColumn(from.getColor() == Color.WHITE ? BLACK_CEMETERY_POSITION : WHITE_CEMETERY_POSITION).increaseNumber();
-	}
-	
+    // Send the dead checker to the cemetery
+    if (((BackgammonMove) move).isEating()) {
+      to.decreaseNumber();
+      getColumn(from.getColor() == Color.WHITE ? BackgammonBoard.BLACK_CEMETERY_POSITION : BackgammonBoard.WHITE_CEMETERY_POSITION)
+          .increaseNumber();
+    }
+
     to.setColor(from.getColor());
     if (from.getNumber() == 0)
       from.setColor(Color.NONE);
