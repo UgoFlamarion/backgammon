@@ -14,8 +14,11 @@ public class BackgammonBoard implements Board {
    * Constants
    */
 
+  private static final int BACKGAMMON_BOARD_SIZE = 24;
   public final static int WHITE_CEMETERY_POSITION = 25;
   public final static int BLACK_CEMETERY_POSITION = 0;
+  public final static int WHITE_HEAVEN_POSITION = -1;
+  public final static int BLACK_HEAVEN_POSITION = 26;
 
   public static boolean IS_CEMETERY(final int position) {
     return position == BackgammonBoard.WHITE_CEMETERY_POSITION || position == BackgammonBoard.BLACK_CEMETERY_POSITION;
@@ -24,19 +27,27 @@ public class BackgammonBoard implements Board {
   public static int COLOR_TO_CEMETERY_POSITION(Color color) {
 	  return color == Color.WHITE ? WHITE_CEMETERY_POSITION : BLACK_CEMETERY_POSITION;
   }
+  
+  public static boolean IS_HEAVEN(int position) {
+	  return position == WHITE_HEAVEN_POSITION || position == BLACK_HEAVEN_POSITION;
+  }
 
   private final Map<Integer, BackgammonColumn> columns;
   private final Dice                           dice;
 
   public BackgammonBoard() {
     this.columns = new HashMap<Integer, BackgammonColumn>();
-    for (int i = 1; i <= 24; i++)
+    for (int i = 1; i <= BACKGAMMON_BOARD_SIZE; i++)
       this.columns.put(i, new BackgammonColumn(i));
 
     // Add cemeteries
     this.columns.put(BackgammonBoard.WHITE_CEMETERY_POSITION, new BackgammonColumn(BackgammonBoard.WHITE_CEMETERY_POSITION, Color.WHITE));
     this.columns.put(BackgammonBoard.BLACK_CEMETERY_POSITION, new BackgammonColumn(BackgammonBoard.BLACK_CEMETERY_POSITION, Color.BLACK));
 
+    // Add heavens
+    this.columns.put(BackgammonBoard.WHITE_HEAVEN_POSITION, new BackgammonColumn(BackgammonBoard.WHITE_HEAVEN_POSITION, Color.WHITE));
+    this.columns.put(BackgammonBoard.BLACK_HEAVEN_POSITION, new BackgammonColumn(BackgammonBoard.BLACK_HEAVEN_POSITION, Color.BLACK));
+    
     // Initialize positions
 //    this.columns.get(1).setNumber(2);
 //    this.columns.get(1).setColor(Color.BLACK);

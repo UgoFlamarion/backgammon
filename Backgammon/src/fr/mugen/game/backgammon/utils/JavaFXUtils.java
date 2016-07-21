@@ -18,6 +18,9 @@ public class JavaFXUtils {
   public static double getCursorX(final int position) {
     if (BackgammonBoard.IS_CEMETERY(position))
       return (JavaFXDisplay.WIDTH / 2) - (JavaFXDisplay.CHECKER_IMAGE_SIZE / 2);
+    else if (BackgammonBoard.IS_HEAVEN(position))
+      return JavaFXDisplay.BORDERX;
+    
     return JavaFXUtils.getCheckerX(position);
   }
 
@@ -25,6 +28,13 @@ public class JavaFXUtils {
     if (BackgammonBoard.IS_CEMETERY(position))
       return (int) ((JavaFXDisplay.HEIGHT / 2)
           - (position == BackgammonBoard.WHITE_CEMETERY_POSITION ? 3 : -2) * JavaFXDisplay.CEMETERY_GAPY);
+//    else if (BackgammonBoard.IS_HEAVEN(position))
+//    	return (int) (JavaFXDisplay.HEIGHT / 2);
+//    	if (position == BackgammonBoard.WHITE_HEAVEN_POSITION)
+//    		return (int) (JavaFXDisplay.WIDTH / 2) + JavaFXDisplay.CHECKER_GAPY;
+//    	else
+//    		return (int) (JavaFXDisplay.WIDTH / 2) - JavaFXDisplay.CHECKER_GAPY;
+//    }
     return position <= 12 ? JavaFXDisplay.CURSORY_LINE1 : JavaFXDisplay.CURSORY_LINE2;
   }
 
@@ -32,6 +42,10 @@ public class JavaFXUtils {
     if (BackgammonBoard.IS_CEMETERY(position))
       return (position == BackgammonBoard.WHITE_CEMETERY_POSITION ? -1 : 1);
     return position <= 12 ? 1 : -1;
+  }
+  
+  public static double getRotate(final int position) {
+	  return BackgammonBoard.IS_HEAVEN(position) ? 90 : 0;
   }
 
 }

@@ -179,7 +179,7 @@ public class JavaFXDisplay implements Display {
   }
 
   public void showCursor() {
-    System.out.println("Get default position for selected cursor at " + this.cursorSelectedPosition);
+    System.out.println("Get default position for selection cursor at " + this.cursorSelectedPosition);
     showCursor(this.game.getCursorDefaultPosition(this.cursorSelectedPosition));
   }
 
@@ -321,6 +321,7 @@ public class JavaFXDisplay implements Display {
   private void updateCursorImageView(final int cursorPosition) {
     this.cursorImageView.setX(JavaFXUtils.getCursorX(cursorPosition));
     this.cursorImageView.setY(JavaFXUtils.getCursorY(cursorPosition));
+    this.cursorImageView.setRotate(JavaFXUtils.getRotate(cursorPosition));
     this.cursorImageView.setScaleY(JavaFXUtils.getScaleY(cursorPosition));
   }
 

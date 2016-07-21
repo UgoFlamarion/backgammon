@@ -32,6 +32,7 @@ public class BackgammonRules implements Rules {
     final BackgammonColumn to = backgammonMove.getTo();
     final Color playerColor = ((BackgammonPlayer) player).getColor();
     final int moveLength = Math.abs(from.getPosition() - to.getPosition());
+//    final int moveLength = Math.abs(from.getPosition() - to.getPosition()) + (BackgammonBoard.IS_HEAVEN(to.getPosition()) ? getSideFactor(to.getPosition()) : 0);
 
     // Unselect case
     if (from.equals(to) || (!BackgammonBoard.IS_CEMETERY(to.getPosition()) && from.equals(to)))
@@ -47,7 +48,8 @@ public class BackgammonRules implements Rules {
         && (Color.NONE == to.getColor() || from.getColor() == to.getColor() || to.getNumber() == 1)
         && (Color.WHITE.equals(playerColor) && from.getPosition() - to.getPosition() > 0
             || Color.BLACK.equals(playerColor) && from.getPosition() - to.getPosition() < 0)
-        && (dice.getDice1() == moveLength || dice.getDice2() == moveLength);
+        && (dice.getDice1() == moveLength || dice.getDice2() == moveLength
+        	|| (BackgammonBoard.IS_HEAVEN(to.getPosition()) && dice.getRange() >= moveLength + getSideFactor(to.getPosition())));
     // || dice.isDoubleDice() && moveLength % dice.getDice1() == 0 && moveLength
     // <= dice.getRange());
   }
@@ -105,10 +107,10 @@ public class BackgammonRules implements Rules {
   }
 
   public int getCursorDefaultPosition(final BackgammonBoard board, final BackgammonPlayer player, final BackgammonColumn selectedColumn) {
-	  final Collection<BackgammonColumn> stream = selectedColumn != null ? this.possibilities.get(selectedColumn)
+	  final Collection<BackgammonColumn> columns = selectedColumn != null ? this.possibilities.get(selectedColumn)
 	          : this.possibilities.keySet();
-	  if (stream != null && stream.size() > 0)
-		  return stream.iterator().next().getPosition();
+	  if (columns != null && columns.size() > 0)
+		  return columns.iterator().next().getPosition();
 	  return -1;
   }
 
@@ -121,7 +123,7 @@ public class BackgammonRules implements Rules {
       final Stream<BackgammonColumn> stream = selectedColumn != null ? this.possibilities.get(selectedColumn).stream()
           : this.possibilities.keySet().stream();
       return stream
-          .filter(column -> (column.getPosition() - currentPosition) * sideFactor < 0 && column.getPosition() / 13 == currentPosition / 13) // Avoid
+          .filter(column -> (column.getPosition() - currentPosition) * sideFactor < 0 && (column.getPosition() / 13 == currentPosition / 13 || BackgammonBoard.IS_HEAVEN(column.getPosition()))) // Avoid
                                                                                                                                             // next
                                                                                                                                             // line
           .max(BackgammonRules.newPositionComparator(sideFactor)).get().getPosition();
@@ -139,7 +141,7 @@ public class BackgammonRules implements Rules {
       final Stream<BackgammonColumn> stream = selectedColumn != null ? this.possibilities.get(selectedColumn).stream()
           : this.possibilities.keySet().stream();
       return stream
-          .filter(column -> (column.getPosition() - currentPosition) * sideFactor > 0 && column.getPosition() / 13 == currentPosition / 13) // Avoid
+          .filter(column -> (column.getPosition() - currentPosition) * sideFactor > 0 && (column.getPosition() / 13 == currentPosition / 13 || BackgammonBoard.IS_HEAVEN(column.getPosition()))) // Avoid
                                                                                                                                             // next
                                                                                                                                             // line
           .min(BackgammonRules.newPositionComparator(sideFactor)).get().getPosition();

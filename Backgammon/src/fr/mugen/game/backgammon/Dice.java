@@ -13,9 +13,6 @@ public class Dice {
 	  
     this.doubleDice = this.dice1 == this.dice2;
     this.range = (this.dice1 + this.dice2) * (this.doubleDice ? 2 : 1);
-
-    // System.out.println("DOUBLE DICE : " + this.doubleDice);
-    // System.out.println("RANGE : " + this.range);
   }
 
   public boolean keepPlaying() {
@@ -29,9 +26,6 @@ public class Dice {
     }
 
     this.range -= moveLength;
-
-    // System.out.println("CONSUME : " + moveLength);
-    // System.out.println("RANGE : " + this.range);
   }
 
   public void consumeAll() {

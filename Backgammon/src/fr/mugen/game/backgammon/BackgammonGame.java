@@ -18,7 +18,7 @@ public class BackgammonGame extends Game {
    * Constants
    */
 
-  public final static int    DEFAULT_CURSOR_POSITION = -1;
+  public final static int    DEFAULT_CURSOR_POSITION = -2;
   public final static String NO_POSSIBILITIES_MESSAGE = "Aucun coup possible, passez votre tour.";
 
   protected Iterator<Player> playersIterator;
@@ -84,7 +84,7 @@ public class BackgammonGame extends Game {
     final BackgammonMove move = ((BackgammonRules) this.rules).initializeMove(from, to);
 
     this.board.move(move);
-    this.display.update(this);
+//    this.display.update(this);
 
     nextTurn();
   }
