@@ -11,12 +11,19 @@ import fr.mugen.game.backgammon.Dice;
 import fr.mugen.game.backgammon.utils.JavaFXUtils;
 import fr.mugen.game.framework.Display;
 import fr.mugen.game.framework.Game;
+import javafx.animation.Interpolator;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.SequentialTransition;
+import javafx.animation.Timeline;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 public class JavaFXDisplay implements Display {
 
@@ -115,6 +122,10 @@ public class JavaFXDisplay implements Display {
     return checker;
   }
 
+  /*
+   * Display
+   */
+  
   private void showCheckers(final Collection<BackgammonColumn> columns) {
     for (final BackgammonColumn column : columns) {
       final int position = column.getPosition();
@@ -134,7 +145,7 @@ public class JavaFXDisplay implements Display {
   }
 
   private void showCemetery(final BackgammonColumn column) {
-    System.out.println("Show cemetery " + column.getPosition());
+    System.out.println("Show cemetery (" + column.getColor() + ")");
     final Color color = column.getColor();
     final ImageView checker = getCheckerImageView(color);
 
@@ -168,15 +179,18 @@ public class JavaFXDisplay implements Display {
   }
 
   public void showCursor() {
-    System.out.println("SELECTED POSITION = " + this.cursorSelectedPosition);
+    System.out.println("Get default position for selected cursor at " + this.cursorSelectedPosition);
     showCursor(this.game.getCursorDefaultPosition(this.cursorSelectedPosition));
   }
 
   public void showCursor(final int cursorPosition) {
-    System.out.println("SHOW CURSOR AT : " + cursorPosition);
+    System.out.println("Show cursor at " + cursorPosition);
+    if (cursorPosition < 0)
+    	return;
+    
     this.cursorPosition = cursorPosition;
 
-    updateCursorImageView();
+    updateCursorImageView(this.cursorPosition);
     if (!this.root.getChildren().contains(this.cursorImageView))
       this.root.getChildren().add(this.cursorImageView);
   }
@@ -190,32 +204,91 @@ public class JavaFXDisplay implements Display {
       this.root.getChildren().add(this.cursorSelectedImageView);
   }
 
+  public void showMessage(String message) {
+	  System.out.println("Show message '" + message + "'.");
+	final Text text = new Text();
+	text.getStyleClass().add("message");
+	text.setText(message);
+	text.setX((WIDTH / 2) - text.getLayoutBounds().getWidth() / 2);
+	text.setY((HEIGHT / 2) - text.getLayoutBounds().getHeight() / 2);
+
+	Timeline blinker = createBlinker(text);
+	SequentialTransition blinkThenFade = new SequentialTransition(text, blinker);
+
+	blinkThenFade.setOnFinished(e -> {
+		this.root.getChildren().remove(text);
+		this.game.forceNextTurn();
+	});
+	this.root.getChildren().add(text);
+    blinkThenFade.play();
+  }
+  
+  private Timeline createBlinker(Node node) {
+      Timeline blink = new Timeline(
+              new KeyFrame(
+                      Duration.seconds(0),
+                      new KeyValue(
+                              node.opacityProperty(), 
+                              1, 
+                              Interpolator.DISCRETE
+                      )
+              ),
+              new KeyFrame(
+                      Duration.seconds(0.5),
+                      new KeyValue(
+                              node.opacityProperty(), 
+                              0, 
+                              Interpolator.DISCRETE
+                      )
+              ),
+              new KeyFrame(
+                      Duration.seconds(1),
+                      new KeyValue(
+                              node.opacityProperty(), 
+                              1, 
+                              Interpolator.DISCRETE
+                      )
+              )
+      );
+      blink.setCycleCount(3);
+
+      return blink;
+  }
+  
+  /*
+   * Sounds
+   */
+  
   public void playRollingDiceSound() {
     final MediaPlayer mediaPlayer = new MediaPlayer(this.diceRolling);
     mediaPlayer.play();
   }
 
+  /*
+   * Controls
+   */
+  
   public void left() {
     this.cursorPosition = this.game.getNextPossiblePositionOnLeft(this.cursorPosition, this.cursorSelectedPosition);
-    updateCursorImageView();
+    updateCursorImageView(this.cursorPosition);
     System.out.println("POSITION = " + this.cursorPosition);
   }
 
   public void right() {
     this.cursorPosition = this.game.getNextPossiblePositionOnRight(this.cursorPosition, this.cursorSelectedPosition);
-    updateCursorImageView();
+    updateCursorImageView(this.cursorPosition);
     System.out.println("POSITION = " + this.cursorPosition);
   }
 
   public void up() {
     this.cursorPosition = this.game.getNextPossiblePositionUpward(this.cursorPosition, this.cursorSelectedPosition);
-    updateCursorImageView();
+    updateCursorImageView(this.cursorPosition);
     System.out.println("POSITION = " + this.cursorPosition);
   }
 
   public void down() {
     this.cursorPosition = this.game.getNextPossiblePositionDownward(this.cursorPosition, this.cursorSelectedPosition);
-    updateCursorImageView();
+    updateCursorImageView(this.cursorPosition);
     System.out.println("POSITION = " + this.cursorPosition);
   }
 
@@ -235,21 +308,20 @@ public class JavaFXDisplay implements Display {
       hideSelectionCursor();
       initCursorSelectedPosition();
       return;
-    } else {
+    } else { // Select checker
       this.cursorSelectedPosition = position;
       showSelectionCursor();
     }
-    // this.game.calculatePossibilities(this.cursorSelectedPosition);
   }
 
   public void initCursorSelectedPosition() {
     this.cursorSelectedPosition = BackgammonGame.DEFAULT_CURSOR_POSITION;
   }
 
-  private void updateCursorImageView() {
-    this.cursorImageView.setX(JavaFXUtils.getCursorX(this.cursorPosition));
-    this.cursorImageView.setY(JavaFXUtils.getCursorY(this.cursorPosition));
-    this.cursorImageView.setScaleY(JavaFXUtils.getScaleY(this.cursorPosition));
+  private void updateCursorImageView(final int cursorPosition) {
+    this.cursorImageView.setX(JavaFXUtils.getCursorX(cursorPosition));
+    this.cursorImageView.setY(JavaFXUtils.getCursorY(cursorPosition));
+    this.cursorImageView.setScaleY(JavaFXUtils.getScaleY(cursorPosition));
   }
 
   private void hideSelectionCursor() {

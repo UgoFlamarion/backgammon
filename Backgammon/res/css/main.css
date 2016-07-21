@@ -14,3 +14,10 @@
 .deadCount.BLACK {
 	-fx-fill: white;
 }
+
+.message {
+    -fx-font-size: 15pt;
+    -fx-font-family: "Segoe UI Semibold";
+    -fx-fill: white;
+    -fx-opacity: 1;
+}

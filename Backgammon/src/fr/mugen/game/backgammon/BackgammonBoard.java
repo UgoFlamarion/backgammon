@@ -20,6 +20,10 @@ public class BackgammonBoard implements Board {
   public static boolean IS_CEMETERY(final int position) {
     return position == BackgammonBoard.WHITE_CEMETERY_POSITION || position == BackgammonBoard.BLACK_CEMETERY_POSITION;
   }
+  
+  public static int COLOR_TO_CEMETERY_POSITION(Color color) {
+	  return color == Color.WHITE ? WHITE_CEMETERY_POSITION : BLACK_CEMETERY_POSITION;
+  }
 
   private final Map<Integer, BackgammonColumn> columns;
   private final Dice                           dice;
@@ -34,29 +38,46 @@ public class BackgammonBoard implements Board {
     this.columns.put(BackgammonBoard.BLACK_CEMETERY_POSITION, new BackgammonColumn(BackgammonBoard.BLACK_CEMETERY_POSITION, Color.BLACK));
 
     // Initialize positions
-    this.columns.get(1).setNumber(2);
-    this.columns.get(1).setColor(Color.BLACK);
-
-    this.columns.get(6).setNumber(5);
-    this.columns.get(6).setColor(Color.WHITE);
-
-    this.columns.get(8).setNumber(3);
-    this.columns.get(8).setColor(Color.WHITE);
-
-    this.columns.get(12).setNumber(5);
-    this.columns.get(12).setColor(Color.BLACK);
-
-    this.columns.get(13).setNumber(5);
-    this.columns.get(13).setColor(Color.WHITE);
-
-    this.columns.get(17).setNumber(3);
-    this.columns.get(17).setColor(Color.BLACK);
-
-    this.columns.get(19).setNumber(5);
-    this.columns.get(19).setColor(Color.BLACK);
-
-    this.columns.get(24).setNumber(2);
-    this.columns.get(24).setColor(Color.WHITE);
+//    this.columns.get(1).setNumber(2);
+//    this.columns.get(1).setColor(Color.BLACK);
+//
+//    this.columns.get(6).setNumber(5);
+//    this.columns.get(6).setColor(Color.WHITE);
+//
+//    this.columns.get(8).setNumber(3);
+//    this.columns.get(8).setColor(Color.WHITE);
+//
+//    this.columns.get(12).setNumber(5);
+//    this.columns.get(12).setColor(Color.BLACK);
+//
+//    this.columns.get(13).setNumber(5);
+//    this.columns.get(13).setColor(Color.WHITE);
+//
+//    this.columns.get(17).setNumber(3);
+//    this.columns.get(17).setColor(Color.BLACK);
+//
+//    this.columns.get(19).setNumber(5);
+//    this.columns.get(19).setColor(Color.BLACK);
+//
+//    this.columns.get(24).setNumber(2);
+//    this.columns.get(24).setColor(Color.WHITE);
+    
+    // TEST
+    
+    this.columns.get(25).setNumber(2);
+    
+  this.columns.get(24).setNumber(2);
+  this.columns.get(24).setColor(Color.BLACK);
+  this.columns.get(23).setNumber(2);
+  this.columns.get(23).setColor(Color.BLACK);
+  this.columns.get(22).setNumber(2);
+  this.columns.get(22).setColor(Color.BLACK);
+  this.columns.get(21).setNumber(2);
+  this.columns.get(21).setColor(Color.BLACK);
+//  this.columns.get(20).setNumber(2);
+//  this.columns.get(20).setColor(Color.BLACK);
+//  this.columns.get(19).setNumber(2);
+//  this.columns.get(19).setColor(Color.BLACK);
 
     this.dice = new Dice();
   }

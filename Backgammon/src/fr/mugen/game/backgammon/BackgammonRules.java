@@ -1,5 +1,6 @@
 package fr.mugen.game.backgammon;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -33,51 +34,66 @@ public class BackgammonRules implements Rules {
     final int moveLength = Math.abs(from.getPosition() - to.getPosition());
 
     // Unselect case
-    if (!BackgammonBoard.IS_CEMETERY(to.getPosition()) && from.equals(to))
+    if (from.equals(to) || (!BackgammonBoard.IS_CEMETERY(to.getPosition()) && from.equals(to)))
       return true;
 
+    System.out.println("Check (" + from.getPosition() + "--> " + to.getPosition() + ") : " + !BackgammonBoard.IS_CEMETERY(to.getPosition()) + " " + (from.getColor() == playerColor) + " " + (from.getNumber() > 0)
+	        + " " + (Color.NONE == to.getColor() || from.getColor() == to.getColor() || to.getNumber() == 1)
+	        + " " +  (Color.WHITE.equals(playerColor) && from.getPosition() - to.getPosition() > 0
+	            || Color.BLACK.equals(playerColor) && from.getPosition() - to.getPosition() < 0)
+	        + " " +  (dice.getDice1() == moveLength || dice.getDice2() == moveLength));
+    
     return !BackgammonBoard.IS_CEMETERY(to.getPosition()) && from.getColor() == playerColor && from.getNumber() > 0
         && (Color.NONE == to.getColor() || from.getColor() == to.getColor() || to.getNumber() == 1)
         && (Color.WHITE.equals(playerColor) && from.getPosition() - to.getPosition() > 0
             || Color.BLACK.equals(playerColor) && from.getPosition() - to.getPosition() < 0)
-        && (dice.getDice1() == moveLength || dice.getDice2() == moveLength || moveLength == dice.getRange());
+        && (dice.getDice1() == moveLength || dice.getDice2() == moveLength);
     // || dice.isDoubleDice() && moveLength % dice.getDice1() == 0 && moveLength
     // <= dice.getRange());
   }
 
   public boolean isSelectable(final BackgammonBoard board, final BackgammonPlayer player, final BackgammonColumn column) {
-    System.out.println("isSelectable Column " + column.getPosition() + "--> " + column.getColor() + " == " + player.getColor() + " && "
-        + column.getNumber() + " > 0 =====>" + (column.getColor() == player.getColor() && column.getNumber() > 0));
-    return column.getColor() == player.getColor() && column.getNumber() > 0;
+//    System.out.println("isSelectable Column " + column.getPosition() + "--> " + column.getColor() + " == " + player.getColor() + " && "
+//        + column.getNumber() + " > 0 =====>" + (column.getColor() == player.getColor() && column.getNumber() > 0));
+    
+    final int cemeteryPosition = BackgammonBoard.COLOR_TO_CEMETERY_POSITION(player.getColor());
+	return (board.getColumn(cemeteryPosition).getNumber() == 0 || column.getPosition() == cemeteryPosition) 
+    		&& column.getColor() == player.getColor() && column.getNumber() > 0;
   }
 
-  public void calculatePossibilities(final BackgammonBoard board, final BackgammonPlayer player) {
+  public boolean calculatePossibilities(final BackgammonBoard board, final BackgammonPlayer player) {
     this.possibilities = new HashMap<BackgammonColumn, List<BackgammonColumn>>();
 
     System.out.println("Calculating possibilities (" + player.getColor() + ") ...");
     board.getColumns().stream().filter(column -> isSelectable(board, player, column)).forEach(selectableColumn -> {
       final List<BackgammonColumn> columns = board.getColumns().stream().filter(column -> {
-        return column != selectableColumn && check(board, player, new BackgammonMove(selectableColumn, column));
+        return check(board, player, new BackgammonMove(selectableColumn, column));
       }).collect(Collectors.toList());
-      // if (!columns.isEmpty())
-      this.possibilities.put(selectableColumn, columns);
+      // Don't add the column if the only possibility is itself.
+       if (columns.size() > 1)
+    	   this.possibilities.put(selectableColumn, columns);
     });
 
     // this.possibilities.keySet().stream().filter(p ->
     // this.possibilities.get(p).isEmpty()).forEach(c ->
     // this.possibilities.remove(c));
 
+    // Remove cemetery possibility from selectable cemeteries
+    BackgammonColumn whiteCemetery = board.getColumn(BackgammonBoard.WHITE_CEMETERY_POSITION);
+    BackgammonColumn blackCemetery = board.getColumn(BackgammonBoard.BLACK_CEMETERY_POSITION);
+    if (this.possibilities.get(whiteCemetery) != null)
+    	this.possibilities.get(whiteCemetery).remove(whiteCemetery);
+    if (this.possibilities.get(blackCemetery) != null)
+    	this.possibilities.get(blackCemetery).remove(blackCemetery);
+    
     for (final Entry<BackgammonColumn, List<BackgammonColumn>> e : this.possibilities.entrySet())
       e.getValue().forEach(c -> {
         System.out.println(e.getKey().getPosition() + " -> " + c.getPosition());
       });
 
-    // possibilities = ((BackgammonBoard)
-    // board).getColumns().stream().filter(column -> {
-    // return selectedColumn != null ? check(board, player, new
-    // BackgammonMove(selectedColumn, column))
-    // : isSelectable(board, player, column);
-    // }).collect(Collectors.toList());
+    if (this.possibilities.isEmpty())
+    	return false;
+    return true;
   }
 
   // public List<BackgammonColumn> getPossibilities() {
@@ -89,9 +105,11 @@ public class BackgammonRules implements Rules {
   }
 
   public int getCursorDefaultPosition(final BackgammonBoard board, final BackgammonPlayer player, final BackgammonColumn selectedColumn) {
-    return board.getColumns().stream().filter(column -> (selectedColumn != null
-        ? check(board, player, new BackgammonMove(selectedColumn, column)) : isSelectable(board, player, column))).findFirst().get()
-        .getPosition();
+	  final Collection<BackgammonColumn> stream = selectedColumn != null ? this.possibilities.get(selectedColumn)
+	          : this.possibilities.keySet();
+	  if (stream != null && stream.size() > 0)
+		  return stream.iterator().next().getPosition();
+	  return -1;
   }
 
   public int getNextPossiblePositionOnLeft(final BackgammonBoard board, final BackgammonPlayer player, final BackgammonColumn currentColumn,

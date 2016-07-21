@@ -19,6 +19,7 @@ public class BackgammonGame extends Game {
    */
 
   public final static int    DEFAULT_CURSOR_POSITION = -1;
+  public final static String NO_POSSIBILITIES_MESSAGE = "Aucun coup possible, passez votre tour.";
 
   protected Iterator<Player> playersIterator;
   protected BackgammonPlayer currentPlayer;
@@ -31,21 +32,33 @@ public class BackgammonGame extends Game {
 
   @Override
   public void start() {
-    nextTurn();
-    this.display.update(this);
+	  this.display.update(this);
+	  nextTurn();
   }
 
   @Override
   public boolean nextTurn() {
     final Player player = nextPlayer();
+    System.out.println("###\n### Player " + ((BackgammonPlayer) player).getColor() + "'s turn. ###\n###");
     player.play(this.board, this.rules, this.display);
-    calculatePossibilities(BackgammonGame.DEFAULT_CURSOR_POSITION);
-
     this.turn++;
+    
+    boolean existPossibilities = calculatePossibilities(BackgammonGame.DEFAULT_CURSOR_POSITION);
 
-    return false;
+    initializeDisplay();
+    this.display.update(this);
+    
+    if (!existPossibilities)
+    	((JavaFXDisplay) this.display).showMessage(NO_POSSIBILITIES_MESSAGE);
+    
+    return true;
   }
 
+  public void forceNextTurn() {
+	((BackgammonBoard) getBoard()).getDice().consumeAll();
+	nextTurn();
+  }
+  
   protected Player nextPlayer() {
     if (((BackgammonBoard) this.board).getDice().keepPlaying())
       return this.currentPlayer;
@@ -55,17 +68,29 @@ public class BackgammonGame extends Game {
 
     return this.currentPlayer = (BackgammonPlayer) this.playersIterator.next();
   }
-
-  public Player getCurrentPlayer() {
-    return this.currentPlayer;
+  
+  public void initializeDisplay() {
+	((JavaFXDisplay) this.display).initCursorSelectedPosition();
+	
+    final int cemeteryPosition = this.currentPlayer.getColor() == Color.WHITE ? BackgammonBoard.WHITE_CEMETERY_POSITION
+        : BackgammonBoard.BLACK_CEMETERY_POSITION;
+    if (((BackgammonBoard) this.board).getColumn(cemeteryPosition).getNumber() > 0)
+      ((JavaFXDisplay) this.display).select(cemeteryPosition);
   }
 
-  public void calculatePossibilities(final int selectedCheckerPosition) {
-    ((BackgammonRules) this.rules).calculatePossibilities((BackgammonBoard) this.board, this.currentPlayer);
-    // ((BackgammonRules) rules).getPossibilities().forEach(c -> {
-    // System.out.println("Column " + c.getPosition() + " : " + c.getNumber() +
-    // " " + c.getColor().name() + " checkers");
-    // });
+  public void move(final int cursorSelectedPosition, final int cursorPosition) {
+    final BackgammonColumn from = ((BackgammonBoard) this.board).getColumn(cursorSelectedPosition);
+    final BackgammonColumn to = ((BackgammonBoard) this.board).getColumn(cursorPosition);
+    final BackgammonMove move = ((BackgammonRules) this.rules).initializeMove(from, to);
+
+    this.board.move(move);
+    this.display.update(this);
+
+    nextTurn();
+  }
+
+  public boolean calculatePossibilities(final int selectedCheckerPosition) {
+    return ((BackgammonRules) this.rules).calculatePossibilities((BackgammonBoard) this.board, this.currentPlayer);
   }
 
   public int getCursorDefaultPosition(final int selectedCheckerPosition) {
@@ -93,37 +118,12 @@ public class BackgammonGame extends Game {
         ((BackgammonBoard) this.board).getColumn(currentPosition), ((BackgammonBoard) this.board).getColumn(selectedCheckerPosition));
   }
 
-  public void move(final int cursorSelectedPosition, final int cursorPosition) {
-    final BackgammonColumn from = ((BackgammonBoard) this.board).getColumn(cursorSelectedPosition);
-    final BackgammonColumn to = ((BackgammonBoard) this.board).getColumn(cursorPosition);
-    final BackgammonMove move = ((BackgammonRules) this.rules).initializeMove(from, to);
-
-    this.board.move(move);
-
-    if (!nextTurn())
-      this.gameIsOver = true;
-
-    ((JavaFXDisplay) this.display).initCursorSelectedPosition();
-
-    final int cemeteryPosition = this.currentPlayer.getColor() == Color.WHITE ? BackgammonBoard.WHITE_CEMETERY_POSITION
-        : BackgammonBoard.BLACK_CEMETERY_POSITION;
-    if (((BackgammonBoard) this.board).getColumn(cemeteryPosition).getNumber() > 0)
-      ((JavaFXDisplay) this.display).select(cemeteryPosition);
-
-    this.display.update(this);
+  /*
+   * Getters
+   */
+  
+  public Player getCurrentPlayer() {
+    return this.currentPlayer;
   }
-
-  // @Override
-  // protected void loop() {
-  // for (final Player player : this.players) {
-  // System.out.println((((BackgammonPlayer) player).isWhite() ? "White" :
-  // "Black") + " player's turn.");
-  //
-  // player.play(this.board, this.rules);
-  // ((BackgammonBoard) this.board).rollDice();
-  // this.display.show(this.board);
-  // }
-  // this.turn++;
-  // }
 
 }

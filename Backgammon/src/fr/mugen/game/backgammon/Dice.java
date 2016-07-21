@@ -10,6 +10,7 @@ public class Dice {
   public void roll() {
     this.dice1 = (int) (Math.random() * 10 % 6 + 1);
     this.dice2 = (int) (Math.random() * 10 % 6 + 1);
+	  
     this.doubleDice = this.dice1 == this.dice2;
     this.range = (this.dice1 + this.dice2) * (this.doubleDice ? 2 : 1);
 
@@ -31,6 +32,10 @@ public class Dice {
 
     // System.out.println("CONSUME : " + moveLength);
     // System.out.println("RANGE : " + this.range);
+  }
+
+  public void consumeAll() {
+	  consume(this.range);
   }
 
   public int getRange() {
