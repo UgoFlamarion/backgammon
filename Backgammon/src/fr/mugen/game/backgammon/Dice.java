@@ -8,8 +8,11 @@ public class Dice {
   private boolean doubleDice;
 
   public void roll() {
-    this.dice1 = (int) (Math.random() * 10 % 6 + 1);
-    this.dice2 = (int) (Math.random() * 10 % 6 + 1);
+//    this.dice1 = (int) (Math.random() * 10 % 6 + 1);
+//    this.dice2 = (int) (Math.random() * 10 % 6 + 1);
+	  
+	  this.dice1 = 3;
+	  this.dice2 = 6;
 	  
     this.doubleDice = this.dice1 == this.dice2;
     this.range = (this.dice1 + this.dice2) * (this.doubleDice ? 2 : 1);

@@ -31,6 +31,10 @@ public class BackgammonBoard implements Board {
   public static boolean IS_HEAVEN(int position) {
 	  return position == WHITE_HEAVEN_POSITION || position == BLACK_HEAVEN_POSITION;
   }
+  
+  public static int COLOR_TO_HEAVEN_POSITION(Color color) {
+	  return color == Color.WHITE ? WHITE_HEAVEN_POSITION : BLACK_HEAVEN_POSITION;
+  }
 
   private final Map<Integer, BackgammonColumn> columns;
   private final Dice                           dice;

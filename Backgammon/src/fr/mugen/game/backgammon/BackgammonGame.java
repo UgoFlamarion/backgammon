@@ -39,7 +39,7 @@ public class BackgammonGame extends Game {
   @Override
   public boolean nextTurn() {
     final Player player = nextPlayer();
-    System.out.println("###\n### Player " + ((BackgammonPlayer) player).getColor() + "'s turn. ###\n###");
+    System.out.println("\n###\n### Player " + ((BackgammonPlayer) player).getColor() + "'s turn. ###\n###\n");
     player.play(this.board, this.rules, this.display);
     this.turn++;
     

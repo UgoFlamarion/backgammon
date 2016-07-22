@@ -42,6 +42,9 @@ public class JavaFXDisplay implements Display {
    * Checkers
    */
 
+  private static final String WHITE_CHECKER_IMG_PATH = "img/white_checker.png";
+  private static final String BLACK_CHECKER_IMG_PATH = "img/black_checker.png";
+  
   public final static int  BORDERX            = 32;
   public final static int  BORDERY            = 30;
 
@@ -70,8 +73,13 @@ public class JavaFXDisplay implements Display {
    * Cursor
    */
 
+  private static final String CURSOR_IMG_PATH = "img/cursor.png";
+  private static final String SELECTION_CURSOR_IMG_PATH = "img/cursor_blue.png";
+  
+  public final static int  CURSOR_IMAGE_SIZE = 25;
+  
   public final static int  CURSORY_LINE1      = 260;
-  public final static int  CURSORY_LINE2      = 330;
+  public final static int  CURSORY_LINE2      = 358;
 
   private final ImageView  cursorImageView;
   private final ImageView  cursorSelectedImageView;
@@ -81,7 +89,7 @@ public class JavaFXDisplay implements Display {
   /*
    * Sounds
    */
-
+  private final static String ROLLING_DICE_SND_PATH = "sound/roll.wav";
   private final Media      diceRolling;
 
   public JavaFXDisplay(final Pane root) throws URISyntaxException {
@@ -92,14 +100,14 @@ public class JavaFXDisplay implements Display {
 
     this.cursorSelectedPosition = BackgammonGame.DEFAULT_CURSOR_POSITION;
 
-    this.blackCheckerImage = new Image("img/black_checker2.png");
-    this.whiteCheckerImage = new Image("img/white_checker2.png");
-    this.cursorImageView = new ImageView(new Image("img/cursor.png"));
-    this.cursorSelectedImageView = new ImageView(new Image("img/cursor_blue.png"));
+    this.blackCheckerImage = new Image(JavaFXDisplay.BLACK_CHECKER_IMG_PATH);
+    this.whiteCheckerImage = new Image(JavaFXDisplay.WHITE_CHECKER_IMG_PATH);
+    this.cursorImageView = new ImageView(new Image(JavaFXDisplay.CURSOR_IMG_PATH));
+    this.cursorSelectedImageView = new ImageView(new Image(JavaFXDisplay.SELECTION_CURSOR_IMG_PATH));
 
     this.diceSprite = new DiceSprite();
 
-    this.diceRolling = new Media(getClass().getClassLoader().getResource("sound/roll.wav").toURI().toString());
+	this.diceRolling = new Media(getClass().getClassLoader().getResource(JavaFXDisplay.ROLLING_DICE_SND_PATH).toURI().toString());
   }
 
   @Override
