@@ -33,35 +33,46 @@ public class BackgammonRules implements Rules {
     final BackgammonColumn to = backgammonMove.getTo();
     final Color playerColor = ((BackgammonPlayer) player).getColor();
     final int moveLength = Math.abs(from.getPosition() - to.getPosition());
-//    final int moveLength = Math.abs(from.getPosition() - to.getPosition()) + (BackgammonBoard.IS_HEAVEN(to.getPosition()) ? getSideFactor(to.getPosition()) : 0);
+    // final int moveLength = Math.abs(from.getPosition() - to.getPosition()) +
+    // (BackgammonBoard.IS_HEAVEN(to.getPosition()) ?
+    // getSideFactor(to.getPosition()) : 0);
 
     // Unselect case
-    if (from.equals(to) || (!BackgammonBoard.IS_CEMETERY(to.getPosition()) && from.equals(to)))
+    if (from.equals(to) || !BackgammonBoard.IS_CEMETERY(to.getPosition()) && from.equals(to))
       return true;
 
-//    System.out.println("Check (" + from.getPosition() + "--> " + to.getPosition() + ") : " + !BackgammonBoard.IS_CEMETERY(to.getPosition()) + " " + (from.getColor() == playerColor) + " " + (from.getNumber() > 0)
-//	        + " " + (Color.NONE == to.getColor() || from.getColor() == to.getColor() || to.getNumber() == 1)
-//	        + " " +  (Color.WHITE.equals(playerColor) && from.getPosition() - to.getPosition() > 0
-//	            || Color.BLACK.equals(playerColor) && from.getPosition() - to.getPosition() < 0)
-//	        + " " +  (dice.getDice1() == moveLength || dice.getDice2() == moveLength));
-    
+    // System.out.println("Check (" + from.getPosition() + "--> " +
+    // to.getPosition() + ") : " +
+    // !BackgammonBoard.IS_CEMETERY(to.getPosition()) + " " + (from.getColor()
+    // == playerColor) + " " + (from.getNumber() > 0)
+    // + " " + (Color.NONE == to.getColor() || from.getColor() == to.getColor()
+    // || to.getNumber() == 1)
+    // + " " + (Color.WHITE.equals(playerColor) && from.getPosition() -
+    // to.getPosition() > 0
+    // || Color.BLACK.equals(playerColor) && from.getPosition() -
+    // to.getPosition() < 0)
+    // + " " + (dice.getDice1() == moveLength || dice.getDice2() ==
+    // moveLength));
+
     return !BackgammonBoard.IS_CEMETERY(to.getPosition()) && from.getColor() == playerColor && from.getNumber() > 0
         && (Color.NONE == to.getColor() || from.getColor() == to.getColor() || to.getNumber() == 1)
         && (Color.WHITE.equals(playerColor) && from.getPosition() - to.getPosition() > 0
             || Color.BLACK.equals(playerColor) && from.getPosition() - to.getPosition() < 0)
-        && (dice.getDice1() == moveLength || dice.getDice2() == moveLength
-        	|| (BackgammonBoard.IS_HEAVEN(to.getPosition()) && moveLength + getSideFactor(to.getPosition()) <= dice.getRange()));
+        && (dice.getDice1() == moveLength || dice.getDice2() == moveLength || BackgammonBoard.IS_HEAVEN(to.getPosition())
+            && moveLength + BackgammonRules.getSideFactor(to.getPosition()) <= dice.getRange());
     // || dice.isDoubleDice() && moveLength % dice.getDice1() == 0 && moveLength
     // <= dice.getRange());
   }
 
   public boolean isSelectable(final BackgammonBoard board, final BackgammonPlayer player, final BackgammonColumn column) {
-//    System.out.println("isSelectable Column " + column.getPosition() + "--> " + column.getColor() + " == " + player.getColor() + " && "
-//        + column.getNumber() + " > 0 =====>" + (column.getColor() == player.getColor() && column.getNumber() > 0));
-    
+    // System.out.println("isSelectable Column " + column.getPosition() + "--> "
+    // + column.getColor() + " == " + player.getColor() + " && "
+    // + column.getNumber() + " > 0 =====>" + (column.getColor() ==
+    // player.getColor() && column.getNumber() > 0));
+
     final int cemeteryPosition = BackgammonBoard.COLOR_TO_CEMETERY_POSITION(player.getColor());
-	return (board.getColumn(cemeteryPosition).getNumber() == 0 || column.getPosition() == cemeteryPosition) 
-    		&& column.getColor() == player.getColor() && column.getNumber() > 0;
+    return (board.getColumn(cemeteryPosition).getNumber() == 0 || column.getPosition() == cemeteryPosition)
+        && column.getColor() == player.getColor() && column.getNumber() > 0;
   }
 
   public boolean calculatePossibilities(final BackgammonBoard board, final BackgammonPlayer player) {
@@ -72,10 +83,11 @@ public class BackgammonRules implements Rules {
       final List<BackgammonColumn> columns = board.getColumns().stream().filter(column -> {
         return check(board, player, new BackgammonMove(selectableColumn, column));
       }).collect(Collectors.toList());
-      
-//      // Avoid adding selectable columns for which the only possibility is itself.
+
+      // // Avoid adding selectable columns for which the only possibility is
+      // itself.
       if (columns.size() > 1)
-    	  this.possibilities.put(selectableColumn, columns);
+        this.possibilities.put(selectableColumn, columns);
     });
 
     // this.possibilities.keySet().stream().filter(p ->
@@ -83,44 +95,49 @@ public class BackgammonRules implements Rules {
     // this.possibilities.remove(c));
 
     // Remove cemetery possibility from selectable cemeteries options.
-    BackgammonColumn whiteCemetery = board.getColumn(BackgammonBoard.WHITE_CEMETERY_POSITION);
-    BackgammonColumn blackCemetery = board.getColumn(BackgammonBoard.BLACK_CEMETERY_POSITION);
+    final BackgammonColumn whiteCemetery = board.getColumn(BackgammonBoard.WHITE_CEMETERY_POSITION);
+    final BackgammonColumn blackCemetery = board.getColumn(BackgammonBoard.BLACK_CEMETERY_POSITION);
     if (this.possibilities.get(whiteCemetery) != null)
-    	this.possibilities.get(whiteCemetery).remove(whiteCemetery);
+      this.possibilities.get(whiteCemetery).remove(whiteCemetery);
     if (this.possibilities.get(blackCemetery) != null)
-    	this.possibilities.get(blackCemetery).remove(blackCemetery);
-    
-    // Remove possibilities where checker can go to heaven, but another further checker exists, or not all checkers are on player's side.
+      this.possibilities.get(blackCemetery).remove(blackCemetery);
+
+    // Remove possibilities where checker can go to heaven, but another further
+    // checker exists, or not all checkers are on player's side.
     this.possibilities.forEach((selectableColumn, columns) -> {
-    	List<BackgammonColumn> toDelete = new ArrayList<>();
-    	columns.forEach(column -> {
-//    		final int moveLength = Math.abs(column.getPosition() - selectableColumn.getPosition());
-    		if (BackgammonBoard.IS_HEAVEN(column.getPosition())
-				&& ((this.possibilities.keySet().stream().filter(p -> this.possibilities.get(p).stream().filter(p2 -> BackgammonBoard.IS_HEAVEN(p2.getPosition())).count() > 0).count() > 0)
-				|| (board.getColumns().stream().filter(p -> p.getColor() == column.getColor() && p.getNumber() > 0 && Math.abs(p.getPosition() - BackgammonBoard.COLOR_TO_HEAVEN_POSITION(column.getColor())) > 8).count() > 0))) {
-    			System.out.println("Delete Column " + column.getPosition() + " from selectable column " + selectableColumn.getPosition());
-    			toDelete.add(column);
-    		}
-    	});
-    	this.possibilities.get(selectableColumn).removeAll(toDelete);
+      final List<BackgammonColumn> toDelete = new ArrayList<>();
+      columns.forEach(column -> {
+        // final int moveLength = Math.abs(column.getPosition() -
+        // selectableColumn.getPosition());
+        if (BackgammonBoard.IS_HEAVEN(column.getPosition()) && (this.possibilities.keySet().stream()
+            .filter(p -> this.possibilities.get(p).stream().filter(p2 -> BackgammonBoard.IS_HEAVEN(p2.getPosition())).count() > 0)
+            .count() > 0
+            || board.getColumns().stream()
+                .filter(p -> p.getColor() == selectableColumn.getColor() && p.getNumber() > 0
+                    && Math.abs(p.getPosition() - BackgammonBoard.COLOR_TO_HEAVEN_POSITION(selectableColumn.getColor())) > 8)
+                .count() > 0)) {
+          System.out.println("Delete Column " + column.getPosition() + " from selectable column " + selectableColumn.getPosition());
+          toDelete.add(column);
+        }
+      });
+      this.possibilities.get(selectableColumn).removeAll(toDelete);
     });
-    
+
     // Remove selectable columns with less than 2 possibilities.
-    List<BackgammonColumn> toDelete = new ArrayList<>();
+    final List<BackgammonColumn> toDelete = new ArrayList<>();
     this.possibilities.forEach((selectableColumn, columns) -> {
-    	if (columns.size() < 2)
-    		toDelete.add(selectableColumn);
+      if (columns.size() < 2)
+        toDelete.add(selectableColumn);
     });
     toDelete.forEach(c -> this.possibilities.remove(c));
-    
-    for (final Entry<BackgammonColumn, List<BackgammonColumn>> e : this.possibilities.entrySet()) {
+
+    for (final Entry<BackgammonColumn, List<BackgammonColumn>> e : this.possibilities.entrySet())
       e.getValue().forEach(c -> {
         System.out.println(e.getKey().getPosition() + " -> " + c.getPosition());
       });
-    }
 
     if (this.possibilities.isEmpty())
-    	return false;
+      return false;
     return true;
   }
 
@@ -133,11 +150,11 @@ public class BackgammonRules implements Rules {
   }
 
   public int getCursorDefaultPosition(final BackgammonBoard board, final BackgammonPlayer player, final BackgammonColumn selectedColumn) {
-	  final Collection<BackgammonColumn> columns = selectedColumn != null ? this.possibilities.get(selectedColumn)
-	          : this.possibilities.keySet();
-	  if (columns != null && columns.size() > 0)
-		  return columns.iterator().next().getPosition();
-	  return -1;
+    final Collection<BackgammonColumn> columns = selectedColumn != null ? this.possibilities.get(selectedColumn)
+        : this.possibilities.keySet();
+    if (columns != null && columns.size() > 0)
+      return columns.iterator().next().getPosition();
+    return -1;
   }
 
   public int getNextPossiblePositionOnLeft(final BackgammonBoard board, final BackgammonPlayer player, final BackgammonColumn currentColumn,
@@ -149,7 +166,8 @@ public class BackgammonRules implements Rules {
       final Stream<BackgammonColumn> stream = selectedColumn != null ? this.possibilities.get(selectedColumn).stream()
           : this.possibilities.keySet().stream();
       return stream
-          .filter(column -> (column.getPosition() - currentPosition) * sideFactor < 0 && (column.getPosition() / 13 == currentPosition / 13 || BackgammonBoard.IS_HEAVEN(column.getPosition())))
+          .filter(column -> (column.getPosition() - currentPosition) * sideFactor < 0
+              && (column.getPosition() / 13 == currentPosition / 13 || BackgammonBoard.IS_HEAVEN(column.getPosition())))
           .max(BackgammonRules.newPositionComparator(sideFactor)).get().getPosition();
     } catch (final NoSuchElementException e) {
       return currentPosition;
@@ -165,7 +183,8 @@ public class BackgammonRules implements Rules {
       final Stream<BackgammonColumn> stream = selectedColumn != null ? this.possibilities.get(selectedColumn).stream()
           : this.possibilities.keySet().stream();
       return stream
-          .filter(column -> (column.getPosition() - currentPosition) * sideFactor > 0 && (column.getPosition() / 13 == currentPosition / 13 || BackgammonBoard.IS_HEAVEN(currentPosition)))
+          .filter(column -> (column.getPosition() - currentPosition) * sideFactor > 0
+              && (column.getPosition() / 13 == currentPosition / 13 || BackgammonBoard.IS_HEAVEN(currentPosition)))
           .min(BackgammonRules.newPositionComparator(sideFactor)).get().getPosition();
     } catch (final NoSuchElementException e) {
       return currentPosition;

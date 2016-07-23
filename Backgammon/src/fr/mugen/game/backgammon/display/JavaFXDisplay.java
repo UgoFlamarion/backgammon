@@ -27,70 +27,70 @@ import javafx.util.Duration;
 
 public class JavaFXDisplay implements Display {
 
-  public static double     WIDTH;
-  public static double     HEIGHT;
+  public static double        WIDTH;
+  public static double        HEIGHT;
 
-  private final Pane       root;
+  private final Pane          root;
 
   /*
    * Game
    */
 
-  private BackgammonGame   game;
+  private BackgammonGame      game;
 
   /*
    * Checkers
    */
 
-  private static final String WHITE_CHECKER_IMG_PATH = "img/white_checker.png";
-  private static final String BLACK_CHECKER_IMG_PATH = "img/black_checker.png";
-  
-  public final static int  BORDERX            = 32;
-  public final static int  BORDERY            = 30;
+  private static final String WHITE_CHECKER_IMG_PATH    = "img/white_checker.png";
+  private static final String BLACK_CHECKER_IMG_PATH    = "img/black_checker.png";
 
-  public final static int  MIDDLE_GAPX        = 59;
-  public final static int  CHECKER_GAPY       = 20;
+  public final static int     BORDERX                   = 32;
+  public final static int     BORDERY                   = 30;
 
-  public final static int  GAPX               = 50;
-  public final static int  GAPY               = 530;
+  public final static int     MIDDLE_GAPX               = 59;
+  public final static int     CHECKER_GAPY              = 20;
 
-  public final static int  CHECKER_IMAGE_SIZE = 50;
+  public final static int     GAPX                      = 50;
+  public final static int     GAPY                      = 530;
 
-  public final static int  CEMETERY_GAPY      = 50;
+  public final static int     CHECKER_IMAGE_SIZE        = 50;
+
+  public final static int     CEMETERY_GAPY             = 50;
 
   // public final static int DEAD_CHECKERX = 32
 
-  private final Image      blackCheckerImage;
-  private final Image      whiteCheckerImage;
+  private final Image         blackCheckerImage;
+  private final Image         whiteCheckerImage;
 
   /*
    * Dice
    */
 
-  private final DiceSprite diceSprite;
+  private final DiceSprite    diceSprite;
 
   /*
    * Cursor
    */
 
-  private static final String CURSOR_IMG_PATH = "img/cursor.png";
+  private static final String CURSOR_IMG_PATH           = "img/cursor.png";
   private static final String SELECTION_CURSOR_IMG_PATH = "img/cursor_blue.png";
-  
-  public final static int  CURSOR_IMAGE_SIZE = 25;
-  
-  public final static int  CURSORY_LINE1      = 260;
-  public final static int  CURSORY_LINE2      = 358;
 
-  private final ImageView  cursorImageView;
-  private final ImageView  cursorSelectedImageView;
-  private int              cursorPosition;
-  private int              cursorSelectedPosition;
+  public final static int     CURSOR_IMAGE_SIZE         = 25;
+
+  public final static int     CURSORY_LINE1             = 260;
+  public final static int     CURSORY_LINE2             = 358;
+
+  private final ImageView     cursorImageView;
+  private final ImageView     cursorSelectedImageView;
+  private int                 cursorPosition;
+  private int                 cursorSelectedPosition;
 
   /*
    * Sounds
    */
-  private final static String ROLLING_DICE_SND_PATH = "sound/roll.wav";
-  private final Media      diceRolling;
+  private final static String ROLLING_DICE_SND_PATH     = "sound/roll.wav";
+  private final Media         diceRolling;
 
   public JavaFXDisplay(final Pane root) throws URISyntaxException {
     this.root = root;
@@ -107,7 +107,7 @@ public class JavaFXDisplay implements Display {
 
     this.diceSprite = new DiceSprite();
 
-	this.diceRolling = new Media(getClass().getClassLoader().getResource(JavaFXDisplay.ROLLING_DICE_SND_PATH).toURI().toString());
+    this.diceRolling = new Media(getClass().getClassLoader().getResource(JavaFXDisplay.ROLLING_DICE_SND_PATH).toURI().toString());
   }
 
   @Override
@@ -133,7 +133,7 @@ public class JavaFXDisplay implements Display {
   /*
    * Display
    */
-  
+
   private void showCheckers(final Collection<BackgammonColumn> columns) {
     for (final BackgammonColumn column : columns) {
       final int position = column.getPosition();
@@ -194,8 +194,8 @@ public class JavaFXDisplay implements Display {
   public void showCursor(final int cursorPosition) {
     System.out.println("Show cursor at " + cursorPosition);
     if (cursorPosition < 0)
-    	return;
-    
+      return;
+
     this.cursorPosition = cursorPosition;
 
     updateCursorImageView(this.cursorPosition);
@@ -212,61 +212,38 @@ public class JavaFXDisplay implements Display {
       this.root.getChildren().add(this.cursorSelectedImageView);
   }
 
-  public void showMessage(String message) {
-	  System.out.println("Show message '" + message + "'.");
-	final Text text = new Text();
-	text.getStyleClass().add("message");
-	text.setText(message);
-	text.setX((WIDTH / 2) - text.getLayoutBounds().getWidth() / 2);
-	text.setY((HEIGHT / 2) - text.getLayoutBounds().getHeight() / 2);
+  public void showMessage(final String message) {
+    System.out.println("Show message '" + message + "'.");
+    final Text text = new Text();
+    text.getStyleClass().add("message");
+    text.setText(message);
+    text.setX((JavaFXDisplay.WIDTH / 2) - text.getLayoutBounds().getWidth() / 2);
+    text.setY((JavaFXDisplay.HEIGHT / 2) - text.getLayoutBounds().getHeight() / 2);
 
-	Timeline blinker = createBlinker(text);
-	SequentialTransition blinkThenFade = new SequentialTransition(text, blinker);
+    final Timeline blinker = createBlinker(text);
+    final SequentialTransition blinkThenFade = new SequentialTransition(text, blinker);
 
-	blinkThenFade.setOnFinished(e -> {
-		this.root.getChildren().remove(text);
-		this.game.forceNextTurn();
-	});
-	this.root.getChildren().add(text);
+    blinkThenFade.setOnFinished(e -> {
+      this.root.getChildren().remove(text);
+      this.game.forceNextTurn();
+    });
+    this.root.getChildren().add(text);
     blinkThenFade.play();
   }
-  
-  private Timeline createBlinker(Node node) {
-      Timeline blink = new Timeline(
-              new KeyFrame(
-                      Duration.seconds(0),
-                      new KeyValue(
-                              node.opacityProperty(), 
-                              1, 
-                              Interpolator.DISCRETE
-                      )
-              ),
-              new KeyFrame(
-                      Duration.seconds(0.5),
-                      new KeyValue(
-                              node.opacityProperty(), 
-                              0, 
-                              Interpolator.DISCRETE
-                      )
-              ),
-              new KeyFrame(
-                      Duration.seconds(1),
-                      new KeyValue(
-                              node.opacityProperty(), 
-                              1, 
-                              Interpolator.DISCRETE
-                      )
-              )
-      );
-      blink.setCycleCount(3);
 
-      return blink;
+  private Timeline createBlinker(final Node node) {
+    final Timeline blink = new Timeline(new KeyFrame(Duration.seconds(0), new KeyValue(node.opacityProperty(), 1, Interpolator.DISCRETE)),
+        new KeyFrame(Duration.seconds(0.5), new KeyValue(node.opacityProperty(), 0, Interpolator.DISCRETE)),
+        new KeyFrame(Duration.seconds(1), new KeyValue(node.opacityProperty(), 1, Interpolator.DISCRETE)));
+    blink.setCycleCount(3);
+
+    return blink;
   }
-  
+
   /*
    * Sounds
    */
-  
+
   public void playRollingDiceSound() {
     final MediaPlayer mediaPlayer = new MediaPlayer(this.diceRolling);
     mediaPlayer.play();
@@ -275,7 +252,7 @@ public class JavaFXDisplay implements Display {
   /*
    * Controls
    */
-  
+
   public void left() {
     this.cursorPosition = this.game.getNextPossiblePositionOnLeft(this.cursorPosition, this.cursorSelectedPosition);
     updateCursorImageView(this.cursorPosition);

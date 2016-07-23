@@ -14,26 +14,26 @@ public class BackgammonBoard implements Board {
    * Constants
    */
 
-  private static final int BACKGAMMON_BOARD_SIZE = 24;
-  public final static int WHITE_CEMETERY_POSITION = 25;
-  public final static int BLACK_CEMETERY_POSITION = 0;
-  public final static int WHITE_HEAVEN_POSITION = -1;
-  public final static int BLACK_HEAVEN_POSITION = 26;
+  private static final int BACKGAMMON_BOARD_SIZE   = 24;
+  public final static int  WHITE_CEMETERY_POSITION = 25;
+  public final static int  BLACK_CEMETERY_POSITION = 0;
+  public final static int  WHITE_HEAVEN_POSITION   = -1;
+  public final static int  BLACK_HEAVEN_POSITION   = 26;
 
   public static boolean IS_CEMETERY(final int position) {
     return position == BackgammonBoard.WHITE_CEMETERY_POSITION || position == BackgammonBoard.BLACK_CEMETERY_POSITION;
   }
-  
-  public static int COLOR_TO_CEMETERY_POSITION(Color color) {
-	  return color == Color.WHITE ? WHITE_CEMETERY_POSITION : BLACK_CEMETERY_POSITION;
+
+  public static int COLOR_TO_CEMETERY_POSITION(final Color color) {
+    return color == Color.WHITE ? BackgammonBoard.WHITE_CEMETERY_POSITION : BackgammonBoard.BLACK_CEMETERY_POSITION;
   }
-  
-  public static boolean IS_HEAVEN(int position) {
-	  return position == WHITE_HEAVEN_POSITION || position == BLACK_HEAVEN_POSITION;
+
+  public static boolean IS_HEAVEN(final int position) {
+    return position == BackgammonBoard.WHITE_HEAVEN_POSITION || position == BackgammonBoard.BLACK_HEAVEN_POSITION;
   }
-  
-  public static int COLOR_TO_HEAVEN_POSITION(Color color) {
-	  return color == Color.WHITE ? WHITE_HEAVEN_POSITION : BLACK_HEAVEN_POSITION;
+
+  public static int COLOR_TO_HEAVEN_POSITION(final Color color) {
+    return color == Color.WHITE ? BackgammonBoard.WHITE_HEAVEN_POSITION : BackgammonBoard.BLACK_HEAVEN_POSITION;
   }
 
   private final Map<Integer, BackgammonColumn> columns;
@@ -41,7 +41,7 @@ public class BackgammonBoard implements Board {
 
   public BackgammonBoard() {
     this.columns = new HashMap<Integer, BackgammonColumn>();
-    for (int i = 1; i <= BACKGAMMON_BOARD_SIZE; i++)
+    for (int i = 1; i <= BackgammonBoard.BACKGAMMON_BOARD_SIZE; i++)
       this.columns.put(i, new BackgammonColumn(i));
 
     // Add cemeteries
@@ -51,48 +51,48 @@ public class BackgammonBoard implements Board {
     // Add heavens
     this.columns.put(BackgammonBoard.WHITE_HEAVEN_POSITION, new BackgammonColumn(BackgammonBoard.WHITE_HEAVEN_POSITION, Color.WHITE));
     this.columns.put(BackgammonBoard.BLACK_HEAVEN_POSITION, new BackgammonColumn(BackgammonBoard.BLACK_HEAVEN_POSITION, Color.BLACK));
-    
+
     // Initialize positions
-//    this.columns.get(1).setNumber(2);
-//    this.columns.get(1).setColor(Color.BLACK);
-//
-//    this.columns.get(6).setNumber(5);
-//    this.columns.get(6).setColor(Color.WHITE);
-//
-//    this.columns.get(8).setNumber(3);
-//    this.columns.get(8).setColor(Color.WHITE);
-//
-//    this.columns.get(12).setNumber(5);
-//    this.columns.get(12).setColor(Color.BLACK);
-//
-//    this.columns.get(13).setNumber(5);
-//    this.columns.get(13).setColor(Color.WHITE);
-//
-//    this.columns.get(17).setNumber(3);
-//    this.columns.get(17).setColor(Color.BLACK);
-//
-//    this.columns.get(19).setNumber(5);
-//    this.columns.get(19).setColor(Color.BLACK);
-//
-//    this.columns.get(24).setNumber(2);
-//    this.columns.get(24).setColor(Color.WHITE);
-    
+    // this.columns.get(1).setNumber(2);
+    // this.columns.get(1).setColor(Color.BLACK);
+    //
+    // this.columns.get(6).setNumber(5);
+    // this.columns.get(6).setColor(Color.WHITE);
+    //
+    // this.columns.get(8).setNumber(3);
+    // this.columns.get(8).setColor(Color.WHITE);
+    //
+    // this.columns.get(12).setNumber(5);
+    // this.columns.get(12).setColor(Color.BLACK);
+    //
+    // this.columns.get(13).setNumber(5);
+    // this.columns.get(13).setColor(Color.WHITE);
+    //
+    // this.columns.get(17).setNumber(3);
+    // this.columns.get(17).setColor(Color.BLACK);
+    //
+    // this.columns.get(19).setNumber(5);
+    // this.columns.get(19).setColor(Color.BLACK);
+    //
+    // this.columns.get(24).setNumber(2);
+    // this.columns.get(24).setColor(Color.WHITE);
+
     // TEST
-    
+
     this.columns.get(25).setNumber(2);
-    
-  this.columns.get(24).setNumber(2);
-  this.columns.get(24).setColor(Color.BLACK);
-  this.columns.get(23).setNumber(2);
-  this.columns.get(23).setColor(Color.BLACK);
-  this.columns.get(22).setNumber(2);
-  this.columns.get(22).setColor(Color.BLACK);
-  this.columns.get(21).setNumber(2);
-  this.columns.get(21).setColor(Color.BLACK);
-//  this.columns.get(20).setNumber(2);
-//  this.columns.get(20).setColor(Color.BLACK);
-//  this.columns.get(19).setNumber(2);
-//  this.columns.get(19).setColor(Color.BLACK);
+
+    this.columns.get(24).setNumber(2);
+    this.columns.get(24).setColor(Color.BLACK);
+    this.columns.get(23).setNumber(2);
+    this.columns.get(23).setColor(Color.BLACK);
+    this.columns.get(22).setNumber(2);
+    this.columns.get(22).setColor(Color.BLACK);
+    this.columns.get(21).setNumber(2);
+    this.columns.get(21).setColor(Color.BLACK);
+    // this.columns.get(20).setNumber(2);
+    // this.columns.get(20).setColor(Color.BLACK);
+    // this.columns.get(19).setNumber(2);
+    // this.columns.get(19).setColor(Color.BLACK);
 
     this.dice = new Dice();
   }
