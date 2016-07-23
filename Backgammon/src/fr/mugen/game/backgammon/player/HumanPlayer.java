@@ -17,4 +17,9 @@ public class HumanPlayer extends BackgammonPlayer {
     this.controls.enable();
   }
 
+  @Override
+  public void stop() {
+    this.controls.disable();
+  }
+
 }

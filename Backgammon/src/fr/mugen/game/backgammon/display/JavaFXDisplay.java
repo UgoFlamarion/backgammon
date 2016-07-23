@@ -16,6 +16,8 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.SequentialTransition;
 import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -212,29 +214,26 @@ public class JavaFXDisplay implements Display {
       this.root.getChildren().add(this.cursorSelectedImageView);
   }
 
-  public void showMessage(final String message) {
+  public void showMessage(final String message, final EventHandler<ActionEvent> onFinished) {
     System.out.println("Show message '" + message + "'.");
     final Text text = new Text();
     text.getStyleClass().add("message");
     text.setText(message);
-    text.setX((JavaFXDisplay.WIDTH / 2) - text.getLayoutBounds().getWidth() / 2);
-    text.setY((JavaFXDisplay.HEIGHT / 2) - text.getLayoutBounds().getHeight() / 2);
+    text.setX(JavaFXDisplay.WIDTH / 2 - text.getLayoutBounds().getWidth() / 2);
+    text.setY(JavaFXDisplay.HEIGHT / 2 - text.getLayoutBounds().getHeight() / 2);
 
     final Timeline blinker = createBlinker(text);
     final SequentialTransition blinkThenFade = new SequentialTransition(text, blinker);
 
-    blinkThenFade.setOnFinished(e -> {
-      this.root.getChildren().remove(text);
-      this.game.forceNextTurn();
-    });
+    blinkThenFade.setOnFinished(onFinished);
     this.root.getChildren().add(text);
     blinkThenFade.play();
   }
 
   private Timeline createBlinker(final Node node) {
-    final Timeline blink = new Timeline(new KeyFrame(Duration.seconds(0), new KeyValue(node.opacityProperty(), 1, Interpolator.DISCRETE)),
-        new KeyFrame(Duration.seconds(0.5), new KeyValue(node.opacityProperty(), 0, Interpolator.DISCRETE)),
-        new KeyFrame(Duration.seconds(1), new KeyValue(node.opacityProperty(), 1, Interpolator.DISCRETE)));
+    final Timeline blink = new Timeline(new KeyFrame(Duration.seconds(0), new KeyValue(node.opacityProperty(), 0, Interpolator.DISCRETE)),
+        new KeyFrame(Duration.seconds(0.5), new KeyValue(node.opacityProperty(), 1, Interpolator.DISCRETE)),
+        new KeyFrame(Duration.seconds(1), new KeyValue(node.opacityProperty(), 0, Interpolator.DISCRETE)));
     blink.setCycleCount(3);
 
     return blink;

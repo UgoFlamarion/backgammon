@@ -20,6 +20,7 @@ public class BackgammonGame extends Game {
 
   public final static int    DEFAULT_CURSOR_POSITION  = -2;
   public final static String NO_POSSIBILITIES_MESSAGE = "Aucun coup possible, passez votre tour.";
+  public final static String GAME_OVER_MESSAGE        = "La partie est terminée.";
 
   protected Iterator<Player> playersIterator;
   protected BackgammonPlayer currentPlayer;
@@ -45,11 +46,14 @@ public class BackgammonGame extends Game {
 
     final boolean existPossibilities = calculatePossibilities(BackgammonGame.DEFAULT_CURSOR_POSITION);
 
-    initializeDisplay();
-    this.display.update(this);
+    updateDisplay();
 
-    if (!existPossibilities)
-      ((JavaFXDisplay) this.display).showMessage(BackgammonGame.NO_POSSIBILITIES_MESSAGE);
+    if (!existPossibilities) {
+      this.currentPlayer.stop();
+      ((JavaFXDisplay) this.display).showMessage(BackgammonGame.NO_POSSIBILITIES_MESSAGE, e -> {
+        forceNextTurn();
+      });
+    }
 
     return true;
   }
@@ -69,24 +73,35 @@ public class BackgammonGame extends Game {
     return this.currentPlayer = (BackgammonPlayer) this.playersIterator.next();
   }
 
-  public void initializeDisplay() {
+  private void gameOver() {
+    updateDisplay();
+    ((JavaFXDisplay) this.display).showMessage(BackgammonGame.GAME_OVER_MESSAGE, null);
+  }
+
+  public void updateDisplay() {
     ((JavaFXDisplay) this.display).initCursorSelectedPosition();
 
     final int cemeteryPosition = this.currentPlayer.getColor() == Color.WHITE ? BackgammonBoard.WHITE_CEMETERY_POSITION
         : BackgammonBoard.BLACK_CEMETERY_POSITION;
     if (((BackgammonBoard) this.board).getColumn(cemeteryPosition).getNumber() > 0)
       ((JavaFXDisplay) this.display).select(cemeteryPosition);
+
+    this.display.update(this);
   }
 
   public void move(final int cursorSelectedPosition, final int cursorPosition) {
+    this.currentPlayer.stop();
+
     final BackgammonColumn from = ((BackgammonBoard) this.board).getColumn(cursorSelectedPosition);
     final BackgammonColumn to = ((BackgammonBoard) this.board).getColumn(cursorPosition);
     final BackgammonMove move = ((BackgammonRules) this.rules).initializeMove(from, to);
 
     this.board.move(move);
-    // this.display.update(this);
 
-    nextTurn();
+    if (!((BackgammonBoard) this.board).doesPlayerWin(this.currentPlayer.getColor()))
+      nextTurn();
+    else
+      gameOver();
   }
 
   public boolean calculatePossibilities(final int selectedCheckerPosition) {

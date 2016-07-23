@@ -17,4 +17,9 @@ public class ComputerPlayer extends BackgammonPlayer {
 
   }
 
+  @Override
+  public void stop() {
+
+  }
+
 }

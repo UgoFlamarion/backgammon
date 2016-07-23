@@ -35,14 +35,12 @@ public class JavaFXControls implements Controls {
         default:
         break;
       }
-      // final BackgammonMove move = (BackgammonMove) this.controls.getMove();
-
     });
   }
 
   @Override
   public void disable() {
-    this.display.getRoot().setOnKeyPressed(null);
+    this.display.getRoot().getScene().setOnKeyPressed(null);
   }
 
   @Override

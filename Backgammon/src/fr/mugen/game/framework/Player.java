@@ -10,4 +10,6 @@ public abstract class Player {
 
   public abstract void play(Board board, Rules rules, Display display);
 
+  public abstract void stop();
+
 }

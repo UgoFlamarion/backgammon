@@ -15,6 +15,7 @@ public class BackgammonBoard implements Board {
    */
 
   private static final int BACKGAMMON_BOARD_SIZE   = 24;
+  private static final int TOTAL_CHECKERS          = 15;
   public final static int  WHITE_CEMETERY_POSITION = 25;
   public final static int  BLACK_CEMETERY_POSITION = 0;
   public final static int  WHITE_HEAVEN_POSITION   = -1;
@@ -79,20 +80,24 @@ public class BackgammonBoard implements Board {
 
     // TEST
 
-    this.columns.get(25).setNumber(2);
+    this.columns.get(0).setNumber(1);
+    this.columns.get(0).setColor(Color.BLACK);
 
-    this.columns.get(24).setNumber(2);
-    this.columns.get(24).setColor(Color.BLACK);
-    this.columns.get(23).setNumber(2);
-    this.columns.get(23).setColor(Color.BLACK);
-    this.columns.get(22).setNumber(2);
-    this.columns.get(22).setColor(Color.BLACK);
-    this.columns.get(21).setNumber(2);
-    this.columns.get(21).setColor(Color.BLACK);
-    // this.columns.get(20).setNumber(2);
-    // this.columns.get(20).setColor(Color.BLACK);
-    // this.columns.get(19).setNumber(2);
-    // this.columns.get(19).setColor(Color.BLACK);
+    this.columns.get(1).setNumber(1);
+    this.columns.get(1).setColor(Color.WHITE);
+    this.columns.get(2).setNumber(2);
+    this.columns.get(2).setColor(Color.WHITE);
+    this.columns.get(4).setNumber(2);
+    this.columns.get(4).setColor(Color.WHITE);
+    this.columns.get(5).setNumber(2);
+    this.columns.get(5).setColor(Color.WHITE);
+    this.columns.get(6).setNumber(4);
+    this.columns.get(6).setColor(Color.WHITE);
+    this.columns.get(16).setNumber(2);
+
+    this.columns.get(16).setColor(Color.BLACK);
+    this.columns.get(20).setNumber(4);
+    this.columns.get(20).setColor(Color.BLACK);
 
     this.dice = new Dice();
   }
@@ -118,7 +123,7 @@ public class BackgammonBoard implements Board {
     final BackgammonColumn from = ((BackgammonMove) move).getFrom();
     final BackgammonColumn to = ((BackgammonMove) move).getTo();
 
-    this.dice.consume(Math.abs(from.getPosition() - to.getPosition()));
+    this.dice.consume(((BackgammonMove) move).getMoveLength(), BackgammonBoard.IS_HEAVEN(to.getPosition()));
     from.decreaseNumber();
     to.increaseNumber();
 
@@ -132,6 +137,10 @@ public class BackgammonBoard implements Board {
     to.setColor(from.getColor());
     if (from.getNumber() == 0)
       from.setColor(Color.NONE);
+  }
+
+  public boolean doesPlayerWin(final Color color) {
+    return this.columns.get(BackgammonBoard.COLOR_TO_HEAVEN_POSITION(color)).getNumber() == BackgammonBoard.TOTAL_CHECKERS;
   }
 
 }
