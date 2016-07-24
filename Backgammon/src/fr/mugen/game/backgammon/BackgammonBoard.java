@@ -22,7 +22,7 @@ public class BackgammonBoard implements Board {
   public final static int  BLACK_HEAVEN_POSITION   = 26;
 
   public static boolean IS_CEMETERY(final int position) {
-    return position == BackgammonBoard.WHITE_CEMETERY_POSITION || position == BackgammonBoard.BLACK_CEMETERY_POSITION;
+    return (position == BackgammonBoard.WHITE_CEMETERY_POSITION) || (position == BackgammonBoard.BLACK_CEMETERY_POSITION);
   }
 
   public static int COLOR_TO_CEMETERY_POSITION(final Color color) {
@@ -30,7 +30,7 @@ public class BackgammonBoard implements Board {
   }
 
   public static boolean IS_HEAVEN(final int position) {
-    return position == BackgammonBoard.WHITE_HEAVEN_POSITION || position == BackgammonBoard.BLACK_HEAVEN_POSITION;
+    return (position == BackgammonBoard.WHITE_HEAVEN_POSITION) || (position == BackgammonBoard.BLACK_HEAVEN_POSITION);
   }
 
   public static int COLOR_TO_HEAVEN_POSITION(final Color color) {

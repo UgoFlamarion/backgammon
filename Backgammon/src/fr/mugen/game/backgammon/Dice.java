@@ -8,8 +8,8 @@ public class Dice {
   private boolean doubleDice;
 
   public void roll() {
-    this.dice1 = (int) (Math.random() * 10 % 6 + 1);
-    this.dice2 = (int) (Math.random() * 10 % 6 + 1);
+    this.dice1 = (int) (((Math.random() * 10) % 6) + 1);
+    this.dice2 = (int) (((Math.random() * 10) % 6) + 1);
     // this.dice1 = 1;
     // this.dice2 = 3;
 
@@ -28,7 +28,7 @@ public class Dice {
 
   public void consume(int moveLength, final boolean goToHeaven) {
     System.out.println("Consume dice : " + moveLength);
-    if (goToHeaven && moveLength != this.dice1 && moveLength != this.dice2)
+    if (goToHeaven && (moveLength != this.dice1) && (moveLength != this.dice2))
       moveLength = this.dice1 > this.dice2 ? this.dice1 : this.dice2;
 
     if (this.dice1 != this.dice2) {

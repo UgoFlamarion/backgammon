@@ -153,7 +153,7 @@ public class JavaFXDisplay implements Display {
     for (final BackgammonColumn column : columns) {
       final int position = column.getPosition();
 
-      if (BackgammonBoard.IS_CEMETERY(position) && column.getNumber() > 0)
+      if (BackgammonBoard.IS_CEMETERY(position) && (column.getNumber() > 0))
         showCemetery(column);
       else
         for (int i = 0; i < column.getNumber(); i++) {
@@ -172,9 +172,9 @@ public class JavaFXDisplay implements Display {
     final Color color = column.getColor();
     final ImageView checker = getCheckerImageView(color);
 
-    final double x = JavaFXDisplay.WIDTH / 2 - JavaFXDisplay.CHECKER_IMAGE_SIZE / 2;
-    final double y = JavaFXDisplay.HEIGHT / 2 - JavaFXDisplay.CHECKER_IMAGE_SIZE
-        + JavaFXDisplay.CEMETERY_GAPY * (color == Color.WHITE ? -1 : 1);
+    final double x = (JavaFXDisplay.WIDTH / 2) - (JavaFXDisplay.CHECKER_IMAGE_SIZE / 2);
+    final double y = ((JavaFXDisplay.HEIGHT / 2) - JavaFXDisplay.CHECKER_IMAGE_SIZE)
+        + (JavaFXDisplay.CEMETERY_GAPY * (color == Color.WHITE ? -1 : 1));
 
     checker.setX(x);
     checker.setY(y);
@@ -182,8 +182,8 @@ public class JavaFXDisplay implements Display {
     final Text text = new Text();
     text.getStyleClass().addAll("deadCount", color.name());
     text.setText("X" + column.getNumber());
-    text.setX(x + JavaFXDisplay.CHECKER_IMAGE_SIZE / 2 - text.getLayoutBounds().getWidth() / 2);
-    text.setY(y + JavaFXDisplay.CHECKER_IMAGE_SIZE / 2 + text.getLayoutBounds().getHeight() / 2);
+    text.setX((x + (JavaFXDisplay.CHECKER_IMAGE_SIZE / 2)) - (text.getLayoutBounds().getWidth() / 2));
+    text.setY(y + (JavaFXDisplay.CHECKER_IMAGE_SIZE / 2) + (text.getLayoutBounds().getHeight() / 2));
 
     this.root.getChildren().add(checker);
     this.root.getChildren().add(text);
@@ -191,13 +191,13 @@ public class JavaFXDisplay implements Display {
 
   public void showDice(final Dice dice) {
     final ImageView dice1ImageView = this.diceSprite.getImageView(dice.getDice1());
-    dice1ImageView.setX(this.root.getWidth() / 2 - DiceSprite.SIZEX);
-    dice1ImageView.setY(this.root.getHeight() / 2 - DiceSprite.SIZEY);
+    dice1ImageView.setX((this.root.getWidth() / 2) - DiceSprite.SIZEX);
+    dice1ImageView.setY((this.root.getHeight() / 2) - DiceSprite.SIZEY);
     this.root.getChildren().add(dice1ImageView);
 
     final ImageView dice2ImageView = this.diceSprite.getImageView(dice.getDice2());
     dice2ImageView.setX(this.root.getWidth() / 2);
-    dice2ImageView.setY(this.root.getHeight() / 2 - DiceSprite.SIZEY);
+    dice2ImageView.setY((this.root.getHeight() / 2) - DiceSprite.SIZEY);
     this.root.getChildren().add(dice2ImageView);
   }
 
@@ -232,8 +232,8 @@ public class JavaFXDisplay implements Display {
     final Text text = new Text();
     text.getStyleClass().add("message");
     text.setText(message);
-    text.setX(JavaFXDisplay.WIDTH / 2 - text.getBoundsInParent().getWidth() / 2);
-    text.setY(JavaFXDisplay.CEMETERY_GAPY + JavaFXDisplay.HEIGHT / 2 - text.getBoundsInParent().getHeight() / 2);
+    text.setX((JavaFXDisplay.WIDTH / 2) - (text.getBoundsInParent().getWidth() / 2));
+    text.setY((JavaFXDisplay.CEMETERY_GAPY + (JavaFXDisplay.HEIGHT / 2)) - (text.getBoundsInParent().getHeight() / 2));
 
     final Timeline blinker = createBlinker(text);
     final SequentialTransition blinkThenFade = new SequentialTransition(text, blinker);

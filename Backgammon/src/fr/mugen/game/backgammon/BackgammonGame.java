@@ -74,7 +74,7 @@ public class BackgammonGame extends Game {
     if (((BackgammonBoard) this.board).getDice().keepPlaying())
       return this.currentPlayer;
 
-    if (this.playersIterator == null || !this.playersIterator.hasNext())
+    if ((this.playersIterator == null) || !this.playersIterator.hasNext())
       this.playersIterator = this.players.iterator();
 
     return this.currentPlayer = (BackgammonPlayer) this.playersIterator.next();
