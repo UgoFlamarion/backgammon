@@ -6,6 +6,4 @@ public interface Controls {
 
   public void disable();
 
-  public Move getMove();
-
 }

@@ -2,7 +2,6 @@ package fr.mugen.game.backgammon.controls;
 
 import fr.mugen.game.backgammon.display.JavaFXDisplay;
 import fr.mugen.game.framework.Controls;
-import fr.mugen.game.framework.Move;
 import javafx.scene.input.KeyCode;
 
 public class JavaFXControls implements Controls {
@@ -41,11 +40,6 @@ public class JavaFXControls implements Controls {
   @Override
   public void disable() {
     this.display.getRoot().getScene().setOnKeyPressed(null);
-  }
-
-  @Override
-  public Move getMove() {
-    return null;
   }
 
 }

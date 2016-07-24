@@ -16,6 +16,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.SequentialTransition;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -44,23 +45,21 @@ public class JavaFXDisplay implements Display {
    * Checkers
    */
 
-  private static final String WHITE_CHECKER_IMG_PATH    = "img/white_checker.png";
-  private static final String BLACK_CHECKER_IMG_PATH    = "img/black_checker.png";
+  private static final String WHITE_CHECKER_IMG_PATH      = "img/white_checker.png";
+  private static final String BLACK_CHECKER_IMG_PATH      = "img/black_checker.png";
 
-  public final static int     BORDERX                   = 32;
-  public final static int     BORDERY                   = 30;
+  public final static int     BORDERX                     = 32;
+  public final static int     BORDERY                     = 30;
 
-  public final static int     MIDDLE_GAPX               = 59;
-  public final static int     CHECKER_GAPY              = 20;
+  public final static int     MIDDLE_GAPX                 = 59;
+  public final static int     CHECKER_GAPY                = 20;
 
-  public final static int     GAPX                      = 50;
-  public final static int     GAPY                      = 530;
+  public final static int     GAPX                        = 50;
+  public final static int     GAPY                        = 530;
 
-  public final static int     CHECKER_IMAGE_SIZE        = 50;
+  public final static int     CHECKER_IMAGE_SIZE          = 50;
 
-  public final static int     CEMETERY_GAPY             = 50;
-
-  // public final static int DEAD_CHECKERX = 32
+  public final static int     CEMETERY_GAPY               = 50;
 
   private final Image         blackCheckerImage;
   private final Image         whiteCheckerImage;
@@ -75,13 +74,13 @@ public class JavaFXDisplay implements Display {
    * Cursor
    */
 
-  private static final String CURSOR_IMG_PATH           = "img/cursor.png";
-  private static final String SELECTION_CURSOR_IMG_PATH = "img/cursor_blue.png";
+  private static final String CURSOR_IMG_PATH             = "img/cursor.png";
+  private static final String SELECTION_CURSOR_IMG_PATH   = "img/cursor_blue.png";
 
-  public final static int     CURSOR_IMAGE_SIZE         = 25;
+  public final static int     CURSOR_IMAGE_SIZE           = 25;
 
-  public final static int     CURSORY_LINE1             = 260;
-  public final static int     CURSORY_LINE2             = 358;
+  public final static int     CURSORY_LINE1               = 260;
+  public final static int     CURSORY_LINE2               = 358;
 
   private final ImageView     cursorImageView;
   private final ImageView     cursorSelectedImageView;
@@ -91,8 +90,16 @@ public class JavaFXDisplay implements Display {
   /*
    * Sounds
    */
-  private final static String ROLLING_DICE_SND_PATH     = "sound/roll.wav";
+
+  private final static String ROLLING_DICE_SND_PATH       = "sound/roll.wav";
   private final Media         diceRolling;
+
+  /*
+   * IA stuff
+   */
+
+  private static final int    COMPUTER_MOVE_TIME_INTERVAL = 500;
+  private Thread              computerMove;
 
   public JavaFXDisplay(final Pane root) throws URISyntaxException {
     this.root = root;
@@ -123,6 +130,12 @@ public class JavaFXDisplay implements Display {
     showDice(((BackgammonBoard) this.game.getBoard()).getDice());
     showCursor();
     showSelectionCursor();
+
+    // Display computer's move
+    if (this.computerMove != null) {
+      this.computerMove.start();
+      this.computerMove = null;
+    }
   }
 
   private ImageView getCheckerImageView(final Color color) {
@@ -219,8 +232,8 @@ public class JavaFXDisplay implements Display {
     final Text text = new Text();
     text.getStyleClass().add("message");
     text.setText(message);
-    text.setX(JavaFXDisplay.WIDTH / 2 - text.getLayoutBounds().getWidth() / 2);
-    text.setY(JavaFXDisplay.HEIGHT / 2 - text.getLayoutBounds().getHeight() / 2);
+    text.setX(JavaFXDisplay.WIDTH / 2 - text.getBoundsInParent().getWidth() / 2);
+    text.setY(JavaFXDisplay.CEMETERY_GAPY + JavaFXDisplay.HEIGHT / 2 - text.getBoundsInParent().getHeight() / 2);
 
     final Timeline blinker = createBlinker(text);
     final SequentialTransition blinkThenFade = new SequentialTransition(text, blinker);
@@ -255,25 +268,25 @@ public class JavaFXDisplay implements Display {
   public void left() {
     this.cursorPosition = this.game.getNextPossiblePositionOnLeft(this.cursorPosition, this.cursorSelectedPosition);
     updateCursorImageView(this.cursorPosition);
-    System.out.println("POSITION = " + this.cursorPosition);
+    System.out.println("Left -> " + this.cursorPosition);
   }
 
   public void right() {
     this.cursorPosition = this.game.getNextPossiblePositionOnRight(this.cursorPosition, this.cursorSelectedPosition);
     updateCursorImageView(this.cursorPosition);
-    System.out.println("POSITION = " + this.cursorPosition);
+    System.out.println("Right -> " + this.cursorPosition);
   }
 
   public void up() {
     this.cursorPosition = this.game.getNextPossiblePositionUpward(this.cursorPosition, this.cursorSelectedPosition);
     updateCursorImageView(this.cursorPosition);
-    System.out.println("POSITION = " + this.cursorPosition);
+    System.out.println("Up -> " + this.cursorPosition);
   }
 
   public void down() {
     this.cursorPosition = this.game.getNextPossiblePositionDownward(this.cursorPosition, this.cursorSelectedPosition);
     updateCursorImageView(this.cursorPosition);
-    System.out.println("POSITION = " + this.cursorPosition);
+    System.out.println("Down -> " + this.cursorPosition);
   }
 
   public void select() {
@@ -281,6 +294,8 @@ public class JavaFXDisplay implements Display {
   }
 
   public void select(final int position) {
+    System.out.println("Select " + position);
+
     // Move checker
     if (this.cursorSelectedPosition != BackgammonGame.DEFAULT_CURSOR_POSITION) {
       this.game.move(this.cursorSelectedPosition, position);
@@ -296,6 +311,50 @@ public class JavaFXDisplay implements Display {
       this.cursorSelectedPosition = position;
       showSelectionCursor();
     }
+  }
+
+  /*
+   * For IA purpose.
+   */
+  public void selectLater(final int from, final int to) {
+    // this.computerMove = () -> {
+    // System.out.println("Executing computer's move : " + from + " -> " + to);
+    // try {
+    // Thread.sleep(700);
+    // Platform.runLater(() -> showCursor(from));
+    // Thread.sleep(700);
+    // Platform.runLater(() -> select());
+    // Thread.sleep(700);
+    // Platform.runLater(() -> showCursor(to));
+    // Thread.sleep(700);
+    // Platform.runLater(() -> select());
+    // } catch (final InterruptedException e) {
+    // e.printStackTrace();
+    // }
+    // };
+
+    this.computerMove = new Thread() {
+      @Override
+      public void run() {
+        System.out.println("Executing computer's move : " + from + " -> " + to);
+        try {
+          if (!BackgammonBoard.IS_CEMETERY(from)) {
+            Thread.sleep(JavaFXDisplay.COMPUTER_MOVE_TIME_INTERVAL);
+            Platform.runLater(() -> showCursor(from));
+            Thread.sleep(JavaFXDisplay.COMPUTER_MOVE_TIME_INTERVAL);
+            Platform.runLater(() -> select());
+          }
+
+          Thread.sleep(JavaFXDisplay.COMPUTER_MOVE_TIME_INTERVAL);
+          Platform.runLater(() -> showCursor(to));
+          Thread.sleep(JavaFXDisplay.COMPUTER_MOVE_TIME_INTERVAL);
+          Platform.runLater(() -> select());
+        } catch (final InterruptedException e) {
+          e.printStackTrace();
+        }
+      }
+
+    };
   }
 
   public void initCursorSelectedPosition() {

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import fr.mugen.game.backgammon.BackgammonColumn.Color;
 import fr.mugen.game.backgammon.controls.JavaFXControls;
 import fr.mugen.game.backgammon.display.JavaFXDisplay;
+import fr.mugen.game.backgammon.player.ComputerPlayerFactory;
 import fr.mugen.game.backgammon.player.HumanPlayer;
 import fr.mugen.game.framework.Controls;
 import fr.mugen.game.framework.Player;
@@ -34,9 +35,16 @@ public class ApplicationLauncher extends Application {
     // Game initialization
     final JavaFXDisplay display = new JavaFXDisplay(this.root);
     final Controls controls = new JavaFXControls(display);
-    final BackgammonGame game = new BackgammonGame(new BackgammonBoard(),
-        Arrays.asList((Player) new HumanPlayer(controls, Color.WHITE), (Player) new HumanPlayer(controls, Color.BLACK)),
-        new BackgammonRules(), display);
+
+    // Human VS Human Game
+    // final BackgammonGame game = new BackgammonGame(new BackgammonBoard(),
+    // Arrays.asList((Player) new HumanPlayer(controls, Color.WHITE), (Player)
+    // new HumanPlayer(controls, Color.BLACK)),
+    // new BackgammonRules(), display);
+
+    // Human VS Easy IA Game
+    final BackgammonGame game = new BackgammonGame(new BackgammonBoard(), Arrays.asList((Player) new HumanPlayer(controls, Color.WHITE),
+        ComputerPlayerFactory.createEasyComputerPlayer(controls, Color.BLACK)), new BackgammonRules(), display);
 
     game.start();
   }

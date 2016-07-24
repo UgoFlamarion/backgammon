@@ -41,11 +41,18 @@ public class BackgammonGame extends Game {
   public boolean nextTurn() {
     final Player player = nextPlayer();
     System.out.println("\n###\n### Player " + ((BackgammonPlayer) player).getColor() + "'s turn. ###\n###\n");
-    player.play(this.board, this.rules, this.display);
-    this.turn++;
+
+    final Dice dice = ((BackgammonBoard) this.board).getDice();
+
+    if (!dice.keepPlaying()) {
+      dice.roll();
+      ((JavaFXDisplay) this.display).playRollingDiceSound();
+    }
 
     final boolean existPossibilities = calculatePossibilities(BackgammonGame.DEFAULT_CURSOR_POSITION);
 
+    player.play(this.board, this.rules, this.display);
+    this.turn++;
     updateDisplay();
 
     if (!existPossibilities) {

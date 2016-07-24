@@ -8,13 +8,14 @@ public class Dice {
   private boolean doubleDice;
 
   public void roll() {
-    // this.dice1 = (int) (Math.random() * 10 % 6 + 1);
-    // this.dice2 = (int) (Math.random() * 10 % 6 + 1);
-    this.dice1 = 1;
-    this.dice2 = 3;
+    this.dice1 = (int) (Math.random() * 10 % 6 + 1);
+    this.dice2 = (int) (Math.random() * 10 % 6 + 1);
+    // this.dice1 = 1;
+    // this.dice2 = 3;
 
     this.doubleDice = this.dice1 == this.dice2;
     this.range = (this.dice1 + this.dice2) * (this.doubleDice ? 2 : 1);
+    System.out.println("Rolling dice : " + this.dice1 + ":" + this.dice2);
   }
 
   public boolean keepPlaying() {

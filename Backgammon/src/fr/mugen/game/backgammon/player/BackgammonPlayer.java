@@ -1,9 +1,6 @@
 package fr.mugen.game.backgammon.player;
 
-import fr.mugen.game.backgammon.BackgammonBoard;
 import fr.mugen.game.backgammon.BackgammonColumn.Color;
-import fr.mugen.game.backgammon.Dice;
-import fr.mugen.game.backgammon.display.JavaFXDisplay;
 import fr.mugen.game.framework.Board;
 import fr.mugen.game.framework.Controls;
 import fr.mugen.game.framework.Display;
@@ -21,12 +18,6 @@ public abstract class BackgammonPlayer extends Player {
 
   @Override
   public void play(final Board board, final Rules rules, final Display display) {
-    final Dice dice = ((BackgammonBoard) board).getDice();
-
-    if (!dice.keepPlaying()) {
-      dice.roll();
-      ((JavaFXDisplay) display).playRollingDiceSound();
-    }
 
     _play(board, rules, display);
   }
