@@ -22,7 +22,7 @@ public class BackgammonBoard implements Board {
   public final static int  BLACK_HEAVEN_POSITION   = 26;
 
   public static boolean IS_CEMETERY(final int position) {
-    return (position == BackgammonBoard.WHITE_CEMETERY_POSITION) || (position == BackgammonBoard.BLACK_CEMETERY_POSITION);
+    return position == BackgammonBoard.WHITE_CEMETERY_POSITION || position == BackgammonBoard.BLACK_CEMETERY_POSITION;
   }
 
   public static int COLOR_TO_CEMETERY_POSITION(final Color color) {
@@ -30,7 +30,7 @@ public class BackgammonBoard implements Board {
   }
 
   public static boolean IS_HEAVEN(final int position) {
-    return (position == BackgammonBoard.WHITE_HEAVEN_POSITION) || (position == BackgammonBoard.BLACK_HEAVEN_POSITION);
+    return position == BackgammonBoard.WHITE_HEAVEN_POSITION || position == BackgammonBoard.BLACK_HEAVEN_POSITION;
   }
 
   public static int COLOR_TO_HEAVEN_POSITION(final Color color) {
@@ -83,13 +83,15 @@ public class BackgammonBoard implements Board {
     // this.columns.get(0).setNumber(1);
     // this.columns.get(0).setColor(Color.BLACK);
     //
-    // this.columns.get(1).setNumber(1);
+    // this.columns.get(1).setNumber(4);
     // this.columns.get(1).setColor(Color.WHITE);
-    // this.columns.get(2).setNumber(2);
+    // this.columns.get(2).setNumber(4);
     // this.columns.get(2).setColor(Color.WHITE);
-    // this.columns.get(4).setNumber(2);
+    // this.columns.get(3).setNumber(4);
+    // this.columns.get(3).setColor(Color.WHITE);
+    // this.columns.get(4).setNumber(4);
     // this.columns.get(4).setColor(Color.WHITE);
-    // this.columns.get(5).setNumber(2);
+    // this.columns.get(5).setNumber(4);
     // this.columns.get(5).setColor(Color.WHITE);
     // this.columns.get(6).setNumber(4);
     // this.columns.get(6).setColor(Color.WHITE);

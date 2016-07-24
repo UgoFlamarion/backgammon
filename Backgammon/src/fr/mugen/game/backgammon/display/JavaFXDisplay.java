@@ -14,6 +14,7 @@ import fr.mugen.game.framework.Game;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
+import javafx.animation.PathTransition;
 import javafx.animation.SequentialTransition;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -22,9 +23,14 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -153,7 +159,7 @@ public class JavaFXDisplay implements Display {
     for (final BackgammonColumn column : columns) {
       final int position = column.getPosition();
 
-      if (BackgammonBoard.IS_CEMETERY(position) && (column.getNumber() > 0))
+      if (BackgammonBoard.IS_CEMETERY(position) && column.getNumber() > 0)
         showCemetery(column);
       else
         for (int i = 0; i < column.getNumber(); i++) {
@@ -172,9 +178,10 @@ public class JavaFXDisplay implements Display {
     final Color color = column.getColor();
     final ImageView checker = getCheckerImageView(color);
 
-    final double x = (JavaFXDisplay.WIDTH / 2) - (JavaFXDisplay.CHECKER_IMAGE_SIZE / 2);
-    final double y = ((JavaFXDisplay.HEIGHT / 2) - JavaFXDisplay.CHECKER_IMAGE_SIZE)
-        + (JavaFXDisplay.CEMETERY_GAPY * (color == Color.WHITE ? -1 : 1));
+    final double x = JavaFXDisplay.WIDTH / 2 - JavaFXDisplay.CHECKER_IMAGE_SIZE / 2;
+    final double y = JavaFXDisplay.HEIGHT / 2
+        - JavaFXDisplay.CHECKER_IMAGE_SIZE
+        + JavaFXDisplay.CEMETERY_GAPY * (color == Color.WHITE ? -1 : 1);
 
     checker.setX(x);
     checker.setY(y);
@@ -182,8 +189,8 @@ public class JavaFXDisplay implements Display {
     final Text text = new Text();
     text.getStyleClass().addAll("deadCount", color.name());
     text.setText("X" + column.getNumber());
-    text.setX((x + (JavaFXDisplay.CHECKER_IMAGE_SIZE / 2)) - (text.getLayoutBounds().getWidth() / 2));
-    text.setY(y + (JavaFXDisplay.CHECKER_IMAGE_SIZE / 2) + (text.getLayoutBounds().getHeight() / 2));
+    text.setX(x + JavaFXDisplay.CHECKER_IMAGE_SIZE / 2 - text.getLayoutBounds().getWidth() / 2);
+    text.setY(y + JavaFXDisplay.CHECKER_IMAGE_SIZE / 2 + text.getLayoutBounds().getHeight() / 2);
 
     this.root.getChildren().add(checker);
     this.root.getChildren().add(text);
@@ -191,13 +198,13 @@ public class JavaFXDisplay implements Display {
 
   public void showDice(final Dice dice) {
     final ImageView dice1ImageView = this.diceSprite.getImageView(dice.getDice1());
-    dice1ImageView.setX((this.root.getWidth() / 2) - DiceSprite.SIZEX);
-    dice1ImageView.setY((this.root.getHeight() / 2) - DiceSprite.SIZEY);
+    dice1ImageView.setX(this.root.getWidth() / 2 - DiceSprite.SIZEX);
+    dice1ImageView.setY(this.root.getHeight() / 2 - DiceSprite.SIZEY);
     this.root.getChildren().add(dice1ImageView);
 
     final ImageView dice2ImageView = this.diceSprite.getImageView(dice.getDice2());
     dice2ImageView.setX(this.root.getWidth() / 2);
-    dice2ImageView.setY((this.root.getHeight() / 2) - DiceSprite.SIZEY);
+    dice2ImageView.setY(this.root.getHeight() / 2 - DiceSprite.SIZEY);
     this.root.getChildren().add(dice2ImageView);
   }
 
@@ -229,18 +236,20 @@ public class JavaFXDisplay implements Display {
 
   public void showMessage(final String message, final EventHandler<ActionEvent> onFinished) {
     System.out.println("Show message '" + message + "'.");
+
     final Text text = new Text();
     text.getStyleClass().add("message");
     text.setText(message);
-    text.setX((JavaFXDisplay.WIDTH / 2) - (text.getBoundsInParent().getWidth() / 2));
-    text.setY((JavaFXDisplay.CEMETERY_GAPY + (JavaFXDisplay.HEIGHT / 2)) - (text.getBoundsInParent().getHeight() / 2));
+    text.autosize();
 
-    final Timeline blinker = createBlinker(text);
-    final SequentialTransition blinkThenFade = new SequentialTransition(text, blinker);
+    final BorderPane stackPane = new BorderPane(text);
+    stackPane.setPrefWidth(JavaFXDisplay.WIDTH);
+    stackPane.setPrefHeight(JavaFXDisplay.HEIGHT);
+    this.root.getChildren().add(stackPane);
 
-    blinkThenFade.setOnFinished(onFinished);
-    this.root.getChildren().add(text);
-    blinkThenFade.play();
+    final SequentialTransition sequentialTransition = new SequentialTransition(stackPane, createBlinker(stackPane));
+    sequentialTransition.setOnFinished(onFinished);
+    sequentialTransition.play();
   }
 
   private Timeline createBlinker(final Node node) {
@@ -250,6 +259,37 @@ public class JavaFXDisplay implements Display {
     blink.setCycleCount(3);
 
     return blink;
+  }
+
+  public void showGameOverScreen(final Color color) {
+    System.out.println("Showing Game Over screen ...");
+
+    this.root.setId("gameOverRoot");
+
+    final VBox vbox = new VBox();
+    final Text text = new Text();
+    text.getStyleClass().add("gameOver");
+    text.setText(color.name().substring(0, 1) + color.name().substring(1, color.name().length()).toLowerCase() + " player wins.");
+    vbox.getChildren().add(text);
+
+    final SequentialTransition sequentialTransition = new SequentialTransition(vbox, createDropDownAnimation(vbox, 4000));
+
+    this.root.getChildren().add(vbox);
+    sequentialTransition.play();
+  }
+
+  private PathTransition createDropDownAnimation(final Node node, final int millis) {
+    System.out.println(node.getLayoutBounds().getWidth());
+    final Path path = new Path();
+    path.getElements().add(new MoveTo(JavaFXDisplay.WIDTH / 2, 0));
+    path.getElements().add(new LineTo(JavaFXDisplay.WIDTH / 2, JavaFXDisplay.HEIGHT / 2));
+
+    final PathTransition pathTransition = new PathTransition();
+    pathTransition.setDuration(Duration.millis(millis));
+    pathTransition.setPath(path);
+    pathTransition.setNode(node);
+
+    return pathTransition;
   }
 
   /*
@@ -317,22 +357,6 @@ public class JavaFXDisplay implements Display {
    * For IA purpose.
    */
   public void selectLater(final int from, final int to) {
-    // this.computerMove = () -> {
-    // System.out.println("Executing computer's move : " + from + " -> " + to);
-    // try {
-    // Thread.sleep(700);
-    // Platform.runLater(() -> showCursor(from));
-    // Thread.sleep(700);
-    // Platform.runLater(() -> select());
-    // Thread.sleep(700);
-    // Platform.runLater(() -> showCursor(to));
-    // Thread.sleep(700);
-    // Platform.runLater(() -> select());
-    // } catch (final InterruptedException e) {
-    // e.printStackTrace();
-    // }
-    // };
-
     this.computerMove = new Thread() {
       @Override
       public void run() {
@@ -379,4 +403,5 @@ public class JavaFXDisplay implements Display {
   public Pane getRoot() {
     return this.root;
   }
+
 }

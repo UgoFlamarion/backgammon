@@ -74,7 +74,7 @@ public class BackgammonGame extends Game {
     if (((BackgammonBoard) this.board).getDice().keepPlaying())
       return this.currentPlayer;
 
-    if ((this.playersIterator == null) || !this.playersIterator.hasNext())
+    if (this.playersIterator == null || !this.playersIterator.hasNext())
       this.playersIterator = this.players.iterator();
 
     return this.currentPlayer = (BackgammonPlayer) this.playersIterator.next();
@@ -82,7 +82,7 @@ public class BackgammonGame extends Game {
 
   private void gameOver() {
     updateDisplay();
-    ((JavaFXDisplay) this.display).showMessage(BackgammonGame.GAME_OVER_MESSAGE, null);
+    ((JavaFXDisplay) this.display).showGameOverScreen(this.currentPlayer.getColor());
   }
 
   public void updateDisplay() {

@@ -3,6 +3,10 @@
     -fx-background-repeat: stretch;
 }
 
+#gameOverRoot {
+	-fx-background-color: black;
+}
+
 .deadCount {
 	-fx-font-size: 20;
 }
@@ -20,4 +24,13 @@
     -fx-font-family: "Segoe UI Semibold";
     -fx-fill: white;
     -fx-opacity: 1;
+    -fx-text-alignment: center;
+}
+
+.gameOver {
+    -fx-font-size: 36pt;
+    -fx-font-family: "Serif";
+    -fx-fill: white;
+    -fx-opacity: 1;	
+    -fx-text-alignment: center;
 }
