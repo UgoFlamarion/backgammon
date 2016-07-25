@@ -10,8 +10,8 @@ public class Dice {
   public void roll() {
     this.dice1 = (int) (((Math.random() * 10) % 6) + 1);
     this.dice2 = (int) (((Math.random() * 10) % 6) + 1);
-    // this.dice1 = 1;
-    // this.dice2 = 3;
+//     this.dice1 = 3;
+//     this.dice2 = 3;
 
     this.doubleDice = this.dice1 == this.dice2;
     this.range = (this.dice1 + this.dice2) * (this.doubleDice ? 2 : 1);
@@ -42,6 +42,14 @@ public class Dice {
 
   public void consumeAll() {
     consume(this.range);
+  }
+  
+  /**
+   * For cloning purpose.
+   */
+  protected void setDice(final int dice1, final int dice2) {
+	  this.dice1 = dice1;
+	  this.dice2 = dice2;
   }
 
   public int getRange() {

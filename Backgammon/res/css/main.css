@@ -29,8 +29,14 @@
 
 .gameOver {
     -fx-font-size: 36pt;
-    -fx-font-family: "Serif";
+    -fx-font-family: "Segoe UI Semibold";
     -fx-fill: white;
     -fx-opacity: 1;	
     -fx-text-alignment: center;
+}
+
+.number {
+	-fx-font-size: 16pt;
+    -fx-font-family: "Segoe UI Semibold";
+    -fx-fill: white;
 }

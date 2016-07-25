@@ -33,27 +33,26 @@ public class BackgammonRules implements Rules {
     final BackgammonColumn to = backgammonMove.getTo();
     final Color playerColor = ((BackgammonPlayer) player).getColor();
     final int moveLength = backgammonMove.getMoveLength();
-    // final int moveLength = Math.abs(from.getPosition() - to.getPosition()) +
-    // (BackgammonBoard.IS_HEAVEN(to.getPosition()) ?
-    // getSideFactor(to.getPosition()) : 0);
 
     // Unselect case
-    if (from.equals(to) || (!BackgammonBoard.IS_CEMETERY(to.getPosition()) && from.equals(to)))
+    //if (from.equals(to) || (!BackgammonBoard.IS_CEMETERY(to.getPosition()) && from.equals(to)))
+    if (from.equals(to))
       return true;
 
-    // System.out.println("Check (" + from.getPosition() + "--> " +
-    // to.getPosition() + ") : " +
-    // !BackgammonBoard.IS_CEMETERY(to.getPosition())
-    // + " " + (from.getColor() == playerColor) + " " + (from.getNumber() > 0) +
-    // " "
-    // + (Color.NONE == to.getColor() || from.getColor() == to.getColor() ||
-    // to.getNumber() == 1) + " "
-    // + (Color.WHITE.equals(playerColor) && from.getPosition() -
-    // to.getPosition() > 0
-    // || Color.BLACK.equals(playerColor) && from.getPosition() -
-    // to.getPosition() < 0)
-    // + " " + (dice.getDice1() == moveLength || dice.getDice2() ==
-    // moveLength));
+//    if (((BackgammonPlayer) player).getColor() == Color.WHITE)
+//     System.out.println("Check (" + from.getPosition() + "--> " +
+//     to.getPosition() + ") : " +
+//     !BackgammonBoard.IS_CEMETERY(to.getPosition())
+//     + " " + (from.getColor() == playerColor) + " " + (from.getNumber() > 0) +
+//     " "
+//     + (Color.NONE == to.getColor() || from.getColor() == to.getColor() ||
+//     to.getNumber() == 1) + " "
+//     + (Color.WHITE.equals(playerColor) && from.getPosition() -
+//     to.getPosition() > 0
+//     || Color.BLACK.equals(playerColor) && from.getPosition() -
+//     to.getPosition() < 0)
+//     + " " + (dice.getDice1() == moveLength || dice.getDice2() ==
+//     moveLength));
 
     return !BackgammonBoard.IS_CEMETERY(to.getPosition())
         && (from.getColor() == playerColor)
@@ -74,9 +73,9 @@ public class BackgammonRules implements Rules {
     // player.getColor() && column.getNumber() > 0));
 
     final int cemeteryPosition = BackgammonBoard.COLOR_TO_CEMETERY_POSITION(player.getColor());
-    return ((board.getColumn(cemeteryPosition).getNumber() == 0) || (column.getPosition() == cemeteryPosition))
-        && (column.getColor() == player.getColor())
-        && (column.getNumber() > 0);
+    return (board.getColumn(cemeteryPosition).getNumber() == 0 || column.getPosition() == cemeteryPosition)
+        && column.getColor() == player.getColor()
+        && column.getNumber() > 0;
   }
 
   public boolean calculatePossibilities(final BackgammonBoard board, final BackgammonPlayer player) {

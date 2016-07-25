@@ -1,6 +1,6 @@
 package fr.mugen.game.backgammon;
 
-public class BackgammonColumn {
+public class BackgammonColumn implements Cloneable {
 
   public enum Color {
     WHITE,
@@ -54,4 +54,12 @@ public class BackgammonColumn {
     return this.position + " - " + this.color.name() + " - " + this.number + " checkers";
   }
 
+  @Override
+  public Object clone() {
+	BackgammonColumn columnCopy = new BackgammonColumn(position, color);
+	columnCopy.setNumber(number);
+	
+	return columnCopy;
+  }
+  
 }

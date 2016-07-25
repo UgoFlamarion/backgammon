@@ -31,8 +31,11 @@ public class JavaFXControls implements Controls {
         break;
         case SPACE:
           this.display.select();
+          break;
+        case TAB:
+          this.display.showHideColumnNumbers();
+          break;
         default:
-        break;
       }
     });
   }

@@ -1,7 +1,9 @@
 package fr.mugen.game.backgammon.display;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import fr.mugen.game.backgammon.BackgammonBoard;
 import fr.mugen.game.backgammon.BackgammonColumn;
@@ -87,6 +89,9 @@ public class JavaFXDisplay implements Display {
 
   public final static int     CURSORY_LINE1               = 260;
   public final static int     CURSORY_LINE2               = 358;
+  
+  public final static int     CEMETERY_LINE1               = 280;
+  public final static int     CEMETERY_LINE2               = 310;
 
   private final ImageView     cursorImageView;
   private final ImageView     cursorSelectedImageView;
@@ -107,6 +112,14 @@ public class JavaFXDisplay implements Display {
   private static final int    COMPUTER_MOVE_TIME_INTERVAL = 500;
   private Thread              computerMove;
 
+  /*
+   * Debug
+   */
+  
+  public final static int     NUMBER_GAPY               = 595;
+  public final static int     NUMBER_ADDITIONNAL_GAPX	= 20;
+  private List<Text> columnNumbers;
+  
   public JavaFXDisplay(final Pane root) throws URISyntaxException {
     this.root = root;
 
@@ -142,13 +155,6 @@ public class JavaFXDisplay implements Display {
       this.computerMove.start();
       this.computerMove = null;
     }
-  }
-
-  private ImageView getCheckerImageView(final Color color) {
-    final ImageView checker = new ImageView();
-    checker.setImage(Color.WHITE.equals(color) ? this.whiteCheckerImage : this.blackCheckerImage);
-
-    return checker;
   }
 
   /*
@@ -208,6 +214,13 @@ public class JavaFXDisplay implements Display {
     this.root.getChildren().add(dice2ImageView);
   }
 
+  private ImageView getCheckerImageView(final Color color) {
+    final ImageView checker = new ImageView();
+    checker.setImage(Color.WHITE.equals(color) ? this.whiteCheckerImage : this.blackCheckerImage);
+
+    return checker;
+  }
+  
   public void showCursor() {
     System.out.println("Get default position for selection cursor at " + this.cursorSelectedPosition);
     showCursor(this.game.getCursorDefaultPosition(this.cursorSelectedPosition));
@@ -265,6 +278,7 @@ public class JavaFXDisplay implements Display {
     System.out.println("Showing Game Over screen ...");
 
     this.root.setId("gameOverRoot");
+    this.root.getChildren().clear();
 
     final VBox vbox = new VBox();
     final Text text = new Text();
@@ -292,6 +306,33 @@ public class JavaFXDisplay implements Display {
     return pathTransition;
   }
 
+  /**
+   * Show column numbers in order to debug easily.
+   */
+  public void showHideColumnNumbers() {
+	  if (columnNumbers != null) {
+		  System.out.println("Remove all");
+		  this.root.getChildren().removeAll(columnNumbers);
+		  columnNumbers = null;
+		  return;
+	  }
+	  
+	  System.out.println("Show");
+	  columnNumbers = new ArrayList<Text>();
+	  for (final BackgammonColumn column : ((BackgammonBoard) this.game.getBoard()).getColumns()) {
+	      final int position = column.getPosition();
+	      
+	      if (position < 1 || position > 24)
+	    	  continue;
+	      
+	      final Text text = new Text(JavaFXUtils.getNumberX(position), JavaFXUtils.getNumberY(position), "" + position);
+	      text.getStyleClass().add("number");
+
+	      columnNumbers.add(text);
+          this.root.getChildren().add(text);
+	    }
+  }
+  
   /*
    * Sounds
    */

@@ -1,4 +1,4 @@
-package fr.mugen.game.backgammon.player;
+package fr.mugen.game.backgammon.player.ai;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -17,7 +17,6 @@ public class EasyComputerPlayer extends ComputerPlayer {
 
   public EasyComputerPlayer(final Controls controls, final Color color) {
     super(controls, color);
-    // TODO Auto-generated constructor stub
   }
 
   @Override
@@ -29,10 +28,6 @@ public class EasyComputerPlayer extends ComputerPlayer {
       return;
 
     final BackgammonColumn selectableColumn = possibilities.keySet().iterator().next();
-
-    // ((JavaFXDisplay) display).select(selectableColumn.getPosition());
-    // ((JavaFXDisplay)
-    // display).select(possibilities.get(selectableColumn).get(0).getPosition());
 
     final int from = selectableColumn.getPosition();
     int to = from;

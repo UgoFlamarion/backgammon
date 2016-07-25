@@ -8,7 +8,7 @@ import fr.mugen.game.backgammon.BackgammonColumn.Color;
 import fr.mugen.game.framework.Board;
 import fr.mugen.game.framework.Move;
 
-public class BackgammonBoard implements Board {
+public class BackgammonBoard implements Board, Cloneable {
 
   /*
    * Constants
@@ -21,8 +21,19 @@ public class BackgammonBoard implements Board {
   public final static int  WHITE_HEAVEN_POSITION   = -1;
   public final static int  BLACK_HEAVEN_POSITION   = 26;
 
+  /*
+   * Properties
+   */
+  
+  private final Map<Integer, BackgammonColumn> columns;
+  private final Dice                           dice;
+  
+  /*
+   * Static methods
+   */
+  
   public static boolean IS_CEMETERY(final int position) {
-    return position == BackgammonBoard.WHITE_CEMETERY_POSITION || position == BackgammonBoard.BLACK_CEMETERY_POSITION;
+	    return position == BackgammonBoard.WHITE_CEMETERY_POSITION || position == BackgammonBoard.BLACK_CEMETERY_POSITION;
   }
 
   public static int COLOR_TO_CEMETERY_POSITION(final Color color) {
@@ -36,9 +47,11 @@ public class BackgammonBoard implements Board {
   public static int COLOR_TO_HEAVEN_POSITION(final Color color) {
     return color == Color.WHITE ? BackgammonBoard.WHITE_HEAVEN_POSITION : BackgammonBoard.BLACK_HEAVEN_POSITION;
   }
-
-  private final Map<Integer, BackgammonColumn> columns;
-  private final Dice                           dice;
+  
+  public static Color POSITION_TO_SIDE_COLOR(final int position) {
+	  final int ratio = (position - 1) / 6; 
+	  return ratio == 0 ? Color.WHITE : (ratio == 3 ? Color.BLACK : null);
+  }
 
   public BackgammonBoard() {
     this.columns = new HashMap<Integer, BackgammonColumn>();
@@ -112,32 +125,28 @@ public class BackgammonBoard implements Board {
     return this.columns.values();
   }
 
-  public void rollDice() {
-    this.dice.roll();
-  }
-
   public Dice getDice() {
     return this.dice;
   }
 
   @Override
   public void move(final Move move) {
-    final BackgammonColumn from = ((BackgammonMove) move).getFrom();
-    final BackgammonColumn to = ((BackgammonMove) move).getTo();
+	final BackgammonMove backgammonMove = (BackgammonMove) move;
+    final BackgammonColumn from = backgammonMove.getFrom();
+    final BackgammonColumn to = backgammonMove.getTo();
 
-    this.dice.consume(((BackgammonMove) move).getMoveLength(), BackgammonBoard.IS_HEAVEN(to.getPosition()));
+    this.dice.consume(backgammonMove.getMoveLength(), BackgammonBoard.IS_HEAVEN(to.getPosition()));
     from.decreaseNumber();
     to.increaseNumber();
 
     // Send the dead checker to the cemetery
-    if (((BackgammonMove) move).isEating()) {
+    if (backgammonMove.isEating()) {
       to.decreaseNumber();
-      getColumn(from.getColor() == Color.WHITE ? BackgammonBoard.BLACK_CEMETERY_POSITION : BackgammonBoard.WHITE_CEMETERY_POSITION)
-          .increaseNumber();
+      getColumn(BackgammonBoard.COLOR_TO_CEMETERY_POSITION(to.getColor())).increaseNumber();
     }
 
     to.setColor(from.getColor());
-    if (from.getNumber() == 0)
+    if (from.getNumber() == 0 && !BackgammonBoard.IS_CEMETERY(from.getPosition()))
       from.setColor(Color.NONE);
   }
 
@@ -145,4 +154,18 @@ public class BackgammonBoard implements Board {
     return this.columns.get(BackgammonBoard.COLOR_TO_HEAVEN_POSITION(color)).getNumber() == BackgammonBoard.TOTAL_CHECKERS;
   }
 
+  @Override
+  public Object clone() {
+	  BackgammonBoard backgammonBoard = new BackgammonBoard();
+	  
+	  columns.forEach((position, column) -> {
+		  backgammonBoard.getColumn(position).setColor(column.getColor());
+		  backgammonBoard.getColumn(position).setNumber(column.getNumber());
+	  });
+	  
+	  backgammonBoard.getDice().setDice(dice.getDice1(), dice.getDice2());
+	  
+	  return backgammonBoard;
+  }
+  
 }

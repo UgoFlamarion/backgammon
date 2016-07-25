@@ -2,7 +2,7 @@ package fr.mugen.game.backgammon;
 
 import fr.mugen.game.framework.Move;
 
-public class BackgammonMove implements Move {
+public class BackgammonMove implements Move, Cloneable {
 
   private final BackgammonColumn from;
   private final BackgammonColumn to;
@@ -45,4 +45,9 @@ public class BackgammonMove implements Move {
     return this.moveLength;
   }
 
+  @Override
+  public Object clone() {
+	  return new BackgammonMove((BackgammonColumn) from.clone(), (BackgammonColumn) to.clone());
+  }
+  
 }
