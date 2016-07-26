@@ -10,8 +10,8 @@ public class Dice {
   public void roll() {
     this.dice1 = (int) (((Math.random() * 10) % 6) + 1);
     this.dice2 = (int) (((Math.random() * 10) % 6) + 1);
-//     this.dice1 = 3;
-//     this.dice2 = 3;
+//     this.dice1 = 1;
+//     this.dice2 = 6;
 
     this.doubleDice = this.dice1 == this.dice2;
     this.range = (this.dice1 + this.dice2) * (this.doubleDice ? 2 : 1);
@@ -27,9 +27,9 @@ public class Dice {
   }
 
   public void consume(int moveLength, final boolean goToHeaven) {
-    System.out.println("Consume dice : " + moveLength);
     if (goToHeaven && (moveLength != this.dice1) && (moveLength != this.dice2))
       moveLength = this.dice1 > this.dice2 ? this.dice1 : this.dice2;
+    System.out.println("Consume dice : " + moveLength);
 
     if (this.dice1 != this.dice2) {
       this.dice1 = this.dice1 == moveLength ? 0 : this.dice1;

@@ -2,17 +2,25 @@ package fr.mugen.game.backgammon.display;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 import fr.mugen.game.backgammon.BackgammonBoard;
 import fr.mugen.game.backgammon.BackgammonColumn;
 import fr.mugen.game.backgammon.BackgammonColumn.Color;
+import fr.mugen.game.backgammon.controls.JavaFXControls;
+import fr.mugen.game.backgammon.player.HumanPlayer;
+import fr.mugen.game.backgammon.player.ai.ComputerPlayerFactory;
+import fr.mugen.game.backgammon.player.ai.ComputerPlayerFactory.Difficulty;
 import fr.mugen.game.backgammon.BackgammonGame;
+import fr.mugen.game.backgammon.BackgammonRules;
 import fr.mugen.game.backgammon.Dice;
 import fr.mugen.game.backgammon.utils.JavaFXUtils;
+import fr.mugen.game.framework.Controls;
 import fr.mugen.game.framework.Display;
 import fr.mugen.game.framework.Game;
+import fr.mugen.game.framework.Player;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -25,6 +33,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -90,8 +99,8 @@ public class JavaFXDisplay implements Display {
   public final static int     CURSORY_LINE1               = 260;
   public final static int     CURSORY_LINE2               = 358;
   
-  public final static int     CEMETERY_LINE1               = 280;
-  public final static int     CEMETERY_LINE2               = 310;
+  public final static int     CEMETERY_LINE1               = 190;
+  public final static int     CEMETERY_LINE2               = 375;
 
   private final ImageView     cursorImageView;
   private final ImageView     cursorSelectedImageView;
@@ -102,8 +111,8 @@ public class JavaFXDisplay implements Display {
    * Sounds
    */
 
-  private final static String ROLLING_DICE_SND_PATH       = "sound/roll.wav";
-  private final Media         diceRolling;
+  private final static String ROLLING_DICE_SOUND_PATH       = "sound/roll.wav";
+  private final Media         diceRollingSound;
 
   /*
    * IA stuff
@@ -118,7 +127,7 @@ public class JavaFXDisplay implements Display {
   
   public final static int     NUMBER_GAPY               = 595;
   public final static int     NUMBER_ADDITIONNAL_GAPX	= 20;
-  private List<Text> columnNumbers;
+  private List<Text> columnNumbersTexts;
   
   public JavaFXDisplay(final Pane root) throws URISyntaxException {
     this.root = root;
@@ -135,7 +144,7 @@ public class JavaFXDisplay implements Display {
 
     this.diceSprite = new DiceSprite();
 
-    this.diceRolling = new Media(getClass().getClassLoader().getResource(JavaFXDisplay.ROLLING_DICE_SND_PATH).toURI().toString());
+    this.diceRollingSound = new Media(getClass().getClassLoader().getResource(JavaFXDisplay.ROLLING_DICE_SOUND_PATH).toURI().toString());
   }
 
   @Override
@@ -290,6 +299,14 @@ public class JavaFXDisplay implements Display {
 
     this.root.getChildren().add(vbox);
     sequentialTransition.play();
+    
+    this.root.getScene().setOnKeyPressed(e -> {
+    	if (e.getCode() == KeyCode.ENTER) {
+    		// Restart the game.
+    	    final BackgammonGame game = new BackgammonGame(new BackgammonBoard(), this.game.getPlayers(), new BackgammonRules(), this);
+    	    game.start();
+    	}
+    });
   }
 
   private PathTransition createDropDownAnimation(final Node node, final int millis) {
@@ -310,15 +327,15 @@ public class JavaFXDisplay implements Display {
    * Show column numbers in order to debug easily.
    */
   public void showHideColumnNumbers() {
-	  if (columnNumbers != null) {
+	  if (columnNumbersTexts != null) {
 		  System.out.println("Remove all");
-		  this.root.getChildren().removeAll(columnNumbers);
-		  columnNumbers = null;
+		  this.root.getChildren().removeAll(columnNumbersTexts);
+		  columnNumbersTexts = null;
 		  return;
 	  }
 	  
 	  System.out.println("Show");
-	  columnNumbers = new ArrayList<Text>();
+	  columnNumbersTexts = new ArrayList<Text>();
 	  for (final BackgammonColumn column : ((BackgammonBoard) this.game.getBoard()).getColumns()) {
 	      final int position = column.getPosition();
 	      
@@ -328,7 +345,7 @@ public class JavaFXDisplay implements Display {
 	      final Text text = new Text(JavaFXUtils.getNumberX(position), JavaFXUtils.getNumberY(position), "" + position);
 	      text.getStyleClass().add("number");
 
-	      columnNumbers.add(text);
+	      columnNumbersTexts.add(text);
           this.root.getChildren().add(text);
 	    }
   }
@@ -338,7 +355,7 @@ public class JavaFXDisplay implements Display {
    */
 
   public void playRollingDiceSound() {
-    final MediaPlayer mediaPlayer = new MediaPlayer(this.diceRolling);
+    final MediaPlayer mediaPlayer = new MediaPlayer(this.diceRollingSound);
     mediaPlayer.play();
   }
 
@@ -356,18 +373,6 @@ public class JavaFXDisplay implements Display {
     this.cursorPosition = this.game.getNextPossiblePositionOnRight(this.cursorPosition, this.cursorSelectedPosition);
     updateCursorImageView(this.cursorPosition);
     System.out.println("Right -> " + this.cursorPosition);
-  }
-
-  public void up() {
-    this.cursorPosition = this.game.getNextPossiblePositionUpward(this.cursorPosition, this.cursorSelectedPosition);
-    updateCursorImageView(this.cursorPosition);
-    System.out.println("Up -> " + this.cursorPosition);
-  }
-
-  public void down() {
-    this.cursorPosition = this.game.getNextPossiblePositionDownward(this.cursorPosition, this.cursorSelectedPosition);
-    updateCursorImageView(this.cursorPosition);
-    System.out.println("Down -> " + this.cursorPosition);
   }
 
   public void select() {

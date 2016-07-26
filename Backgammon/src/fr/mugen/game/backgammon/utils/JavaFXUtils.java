@@ -47,8 +47,7 @@ public class JavaFXUtils {
 
   public static int getCursorY(final int position) {
     if (BackgammonBoard.IS_CEMETERY(position))
-      return (int) ((JavaFXDisplay.HEIGHT / 2)
-          - (position == BackgammonBoard.WHITE_CEMETERY_POSITION ? JavaFXDisplay.CEMETERY_LINE1 : JavaFXDisplay.CEMETERY_LINE2));
+      return (int) (position == BackgammonBoard.WHITE_CEMETERY_POSITION ? JavaFXDisplay.CEMETERY_LINE1 : JavaFXDisplay.CEMETERY_LINE2);
     else if (BackgammonBoard.IS_HEAVEN(position))
       return (int) (JavaFXDisplay.HEIGHT / 2) - (JavaFXDisplay.CURSOR_IMAGE_SIZE / 2);
 

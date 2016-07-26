@@ -3,6 +3,7 @@ package fr.mugen.game.backgammon;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import fr.mugen.game.backgammon.BackgammonColumn.Color;
 import fr.mugen.game.framework.Board;
@@ -25,7 +26,7 @@ public class BackgammonBoard implements Board, Cloneable {
    * Properties
    */
   
-  private final Map<Integer, BackgammonColumn> columns;
+  private Map<Integer, BackgammonColumn> columns;
   private final Dice                           dice;
   
   /*
@@ -114,9 +115,17 @@ public class BackgammonBoard implements Board, Cloneable {
     // this.columns.get(20).setNumber(4);
     // this.columns.get(20).setColor(Color.BLACK);
 
+//    orderColumns();
+    
     this.dice = new Dice();
   }
 
+//  private void orderColumns() {
+//	this.columns = (Map<Integer, BackgammonColumn>) this.columns.entrySet().stream()
+//						.sorted((entry1, entry2) -> entry1.getKey() - entry2.getKey())
+//						.collect(Collectors.toMap(entry -> ((Map.Entry<Integer, BackgammonColumn>) entry).getKey(), entry -> ((Map.Entry<Integer, BackgammonColumn>) entry).getValue()));
+//	}
+  
   public BackgammonColumn getColumn(final int position) {
     return this.columns.get(position);
   }

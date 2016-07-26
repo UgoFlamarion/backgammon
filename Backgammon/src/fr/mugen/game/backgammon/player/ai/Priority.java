@@ -18,12 +18,12 @@ public class Priority {
 		this.weight = weight;
 	}
 
-	public void increaseWeight() {
-		weight++;
+	public void increaseWeight(final int n) {
+		weight += n;
 	}
 	
-	public void decreaseWeight() {
-		weight--;
+	public void decreaseWeight(final int n) {
+		weight -= n;
 	}
 
 	public int getWeight() {

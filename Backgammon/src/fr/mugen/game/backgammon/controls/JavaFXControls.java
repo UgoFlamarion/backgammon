@@ -23,12 +23,6 @@ public class JavaFXControls implements Controls {
         case RIGHT:
           this.display.right();
         break;
-        case UP:
-          this.display.up();
-        break;
-        case DOWN:
-          this.display.down();
-        break;
         case SPACE:
           this.display.select();
           break;

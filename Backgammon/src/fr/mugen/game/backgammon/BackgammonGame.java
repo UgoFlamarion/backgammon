@@ -5,6 +5,7 @@ import java.util.List;
 
 import fr.mugen.game.backgammon.BackgammonColumn.Color;
 import fr.mugen.game.backgammon.display.JavaFXDisplay;
+import fr.mugen.game.backgammon.factory.BackgammonMoveFactory;
 import fr.mugen.game.backgammon.player.BackgammonPlayer;
 import fr.mugen.game.framework.Board;
 import fr.mugen.game.framework.Display;
@@ -101,7 +102,7 @@ public class BackgammonGame extends Game {
 
     final BackgammonColumn from = ((BackgammonBoard) this.board).getColumn(cursorSelectedPosition);
     final BackgammonColumn to = ((BackgammonBoard) this.board).getColumn(cursorPosition);
-    final BackgammonMove move = ((BackgammonRules) this.rules).initializeMove(from, to);
+    final BackgammonMove move = BackgammonMoveFactory.createBackgammonMove(from, to);
 
     this.board.move(move);
 
@@ -121,23 +122,11 @@ public class BackgammonGame extends Game {
   }
 
   public int getNextPossiblePositionOnLeft(final int currentPosition, final int selectedCheckerPosition) {
-    return ((BackgammonRules) this.rules).getNextPossiblePositionOnLeft((BackgammonBoard) this.board, this.currentPlayer,
-        ((BackgammonBoard) this.board).getColumn(currentPosition), ((BackgammonBoard) this.board).getColumn(selectedCheckerPosition));
+    return ((BackgammonRules) this.rules).getNextPossiblePositionOnLeft(((BackgammonBoard) this.board).getColumn(currentPosition), ((BackgammonBoard) this.board).getColumn(selectedCheckerPosition));
   }
 
   public int getNextPossiblePositionOnRight(final int currentPosition, final int selectedCheckerPosition) {
-    return ((BackgammonRules) this.rules).getNextPossiblePositionOnRight((BackgammonBoard) this.board, this.currentPlayer,
-        ((BackgammonBoard) this.board).getColumn(currentPosition), ((BackgammonBoard) this.board).getColumn(selectedCheckerPosition));
-  }
-
-  public int getNextPossiblePositionUpward(final int currentPosition, final int selectedCheckerPosition) {
-    return ((BackgammonRules) this.rules).getNextPossiblePositionUpward((BackgammonBoard) this.board, this.currentPlayer,
-        ((BackgammonBoard) this.board).getColumn(currentPosition), ((BackgammonBoard) this.board).getColumn(selectedCheckerPosition));
-  }
-
-  public int getNextPossiblePositionDownward(final int currentPosition, final int selectedCheckerPosition) {
-    return ((BackgammonRules) this.rules).getNextPossiblePositionDownward((BackgammonBoard) this.board, this.currentPlayer,
-        ((BackgammonBoard) this.board).getColumn(currentPosition), ((BackgammonBoard) this.board).getColumn(selectedCheckerPosition));
+    return ((BackgammonRules) this.rules).getNextPossiblePositionOnRight(((BackgammonBoard) this.board).getColumn(currentPosition), ((BackgammonBoard) this.board).getColumn(selectedCheckerPosition));
   }
 
   /*

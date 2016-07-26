@@ -2,13 +2,11 @@ package fr.mugen.game.backgammon;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import fr.mugen.game.backgammon.BackgammonColumn.Color;
 import fr.mugen.game.backgammon.player.BackgammonPlayer;
@@ -22,7 +20,6 @@ public class BackgammonRules implements Rules {
   private HashMap<BackgammonColumn, List<BackgammonColumn>> possibilities;
 
   public BackgammonRules() {
-    this.possibilities = new HashMap<BackgammonColumn, List<BackgammonColumn>>();
   }
 
   @Override
@@ -79,7 +76,7 @@ public class BackgammonRules implements Rules {
   }
 
   public boolean calculatePossibilities(final BackgammonBoard board, final BackgammonPlayer player) {
-    this.possibilities = new HashMap<BackgammonColumn, List<BackgammonColumn>>();
+    this.possibilities = new LinkedHashMap<BackgammonColumn, List<BackgammonColumn>>();
 
     System.out.println("Calculating possibilities (" + player.getColor() + ") ...");
     board.getColumns().stream().filter(column -> isSelectable(board, player, column)).forEach(selectableColumn -> {
@@ -89,10 +86,12 @@ public class BackgammonRules implements Rules {
 
       // Avoid adding selectable columns for which the only possibility is
       // itself.
-      if (columns.size() > 1)
+      if (columns.size() > 1) {
+    	  System.out.println("Put " + selectableColumn.getPosition());
         this.possibilities.put(selectableColumn, columns);
+      }
       else
-        System.out.println("Didn't add " + selectableColumn.getPosition() + " -> " + columns.get(0).getPosition());
+        System.out.println("Didn't put " + selectableColumn.getPosition() + " -> " + columns.get(0).getPosition());
     });
 
     cleanUpPossibilities(board, player);
@@ -156,8 +155,8 @@ public class BackgammonRules implements Rules {
   private boolean existFurtherCheckerForHeaven(final BackgammonColumn selectableColumn) {
     return this.possibilities.keySet().stream().filter(p -> {
       final int possibilityPosition = selectableColumn.getPosition();
-      return (this.possibilities.get(p).stream().filter(p2 -> BackgammonBoard.IS_HEAVEN(p2.getPosition())).count() > 0)
-          && (((p.getPosition() - possibilityPosition) * BackgammonRules.getSideFactor(possibilityPosition)) > 0);
+//      return (this.possibilities.get(p).stream().filter(p2 -> BackgammonBoard.IS_HEAVEN(p2.getPosition())).count() > 0) &&
+          return (((p.getPosition() - possibilityPosition) * BackgammonRules.getSideFactor(possibilityPosition)) > 0);
     }).count() > 0;
   }
 
@@ -168,87 +167,32 @@ public class BackgammonRules implements Rules {
             && (Math.abs(p.getPosition() - BackgammonBoard.COLOR_TO_HEAVEN_POSITION(selectableColumn.getColor())) > 7))
         .count() > 0;
   }
-
-  public BackgammonMove initializeMove(final BackgammonColumn from, final BackgammonColumn to) {
-    return new BackgammonMove(from, to, (to.getColor() != Color.NONE) && (from.getColor() != to.getColor()));
-  }
-
+  
   public int getCursorDefaultPosition(final BackgammonBoard board, final BackgammonPlayer player, final BackgammonColumn selectedColumn) {
+	  if (this.possibilities == null || this.possibilities.isEmpty())
+		  return -1;
+	  
     final Collection<BackgammonColumn> columns = selectedColumn != null ? this.possibilities.get(selectedColumn)
         : this.possibilities.keySet();
     if ((columns != null) && (columns.size() > 0))
       return columns.iterator().next().getPosition();
+    
     return -1;
   }
 
-  public int getNextPossiblePositionOnLeft(final BackgammonBoard board, final BackgammonPlayer player, final BackgammonColumn currentColumn,
-      final BackgammonColumn selectedColumn) {
-    final int currentPosition = currentColumn.getPosition();
-    final int sideFactor = BackgammonRules.getSideFactor(currentPosition);
-
-    try {
-      final Stream<BackgammonColumn> stream = selectedColumn != null ? this.possibilities.get(selectedColumn).stream()
-          : this.possibilities.keySet().stream();
-      return stream
-          .filter(column -> (((column.getPosition() - currentPosition) * sideFactor) < 0)
-              && (((column.getPosition() / 13) == (currentPosition / 13)) || BackgammonBoard.IS_HEAVEN(column.getPosition())))
-          .max(BackgammonRules.newPositionComparator(sideFactor)).get().getPosition();
-    } catch (final NoSuchElementException e) {
-      return currentPosition;
-    }
+  public int getNextPossiblePositionOnLeft(final BackgammonColumn currentColumn, final BackgammonColumn selectedColumn) {
+	  return getNextPosition(currentColumn, selectedColumn, false);
   }
 
-  public int getNextPossiblePositionOnRight(final BackgammonBoard board, final BackgammonPlayer player,
-      final BackgammonColumn currentColumn, final BackgammonColumn selectedColumn) {
-    final int currentPosition = currentColumn.getPosition();
-    final int sideFactor = BackgammonRules.getSideFactor(currentPosition);
-
-    try {
-      final Stream<BackgammonColumn> stream = selectedColumn != null ? this.possibilities.get(selectedColumn).stream()
-          : this.possibilities.keySet().stream();
-      return stream
-          .filter(column -> (((column.getPosition() - currentPosition) * sideFactor) > 0)
-              && (((column.getPosition() / 13) == (currentPosition / 13)) || BackgammonBoard.IS_HEAVEN(currentPosition)))
-          .min(BackgammonRules.newPositionComparator(sideFactor)).get().getPosition();
-    } catch (final NoSuchElementException e) {
-      return currentPosition;
-    }
+  public int getNextPossiblePositionOnRight(final BackgammonColumn currentColumn, final BackgammonColumn selectedColumn) {
+	  return getNextPosition(currentColumn, selectedColumn, true);
   }
 
-  public int getNextPossiblePositionUpward(final BackgammonBoard board, final BackgammonPlayer player, final BackgammonColumn currentColumn,
-      final BackgammonColumn selectedColumn) {
-    final int currentPosition = currentColumn.getPosition();
-
-    if ((currentPosition >= 1) && (currentPosition <= 12))
-      return currentPosition;
-
-    final int sideFactor = BackgammonRules.getSideFactor(currentPosition);
-    try {
-      final Stream<BackgammonColumn> stream = selectedColumn != null ? this.possibilities.get(selectedColumn).stream()
-          : this.possibilities.keySet().stream();
-      return stream.filter(column -> (column.getPosition() >= 1) && (column.getPosition() <= 12))
-          .min(BackgammonRules.newPositionComparator(sideFactor)).get().getPosition();
-    } catch (final NoSuchElementException e) {
-      return currentPosition;
-    }
-  }
-
-  public int getNextPossiblePositionDownward(final BackgammonBoard board, final BackgammonPlayer player,
-      final BackgammonColumn currentColumn, final BackgammonColumn selectedColumn) {
-    final int currentPosition = currentColumn.getPosition();
-
-    if ((currentPosition >= 13) && (currentPosition <= 24))
-      return currentPosition;
-
-    final int sideFactor = BackgammonRules.getSideFactor(currentPosition);
-    try {
-      final Stream<BackgammonColumn> stream = selectedColumn != null ? this.possibilities.get(selectedColumn).stream()
-          : this.possibilities.keySet().stream();
-      return stream.filter(column -> (column.getPosition() >= 13) && (column.getPosition() <= 24))
-          .min(BackgammonRules.newPositionComparator(sideFactor)).get().getPosition();
-    } catch (final NoSuchElementException e) {
-      return currentPosition;
-    }
+  private int getNextPosition(final BackgammonColumn currentColumn, final BackgammonColumn selectedColumn, final boolean clockwise) {
+	  final List<BackgammonColumn> columns = selectedColumn == null ? this.possibilities.keySet().stream().collect(Collectors.toList()) : this.possibilities.get(selectedColumn);
+	  final int index = columns.indexOf(currentColumn) + (clockwise ? 1 : -1);
+	  
+	  return index >= columns.size() ? columns.get(0).getPosition() : (index < 0 ? columns.get(columns.size() - 1).getPosition() : columns.get(index).getPosition());
   }
 
   /**
@@ -256,10 +200,6 @@ public class BackgammonRules implements Rules {
    */
   public static int getSideFactor(final int currentPosition) {
     return currentPosition <= 12 ? 1 : -1;
-  }
-
-  private static Comparator<? super BackgammonColumn> newPositionComparator(final int sideFactor) {
-    return (p1, p2) -> (p1.getPosition() - p2.getPosition()) * sideFactor;
   }
 
   /*
