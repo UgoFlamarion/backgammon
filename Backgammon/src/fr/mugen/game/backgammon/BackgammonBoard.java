@@ -14,26 +14,26 @@ public class BackgammonBoard implements Board, Cloneable {
    * Constants
    */
 
-  private static final int BACKGAMMON_BOARD_SIZE   = 24;
-  private static final int TOTAL_CHECKERS          = 15;
-  public final static int  WHITE_CEMETERY_POSITION = 25;
-  public final static int  BLACK_CEMETERY_POSITION = 0;
-  public final static int  WHITE_HEAVEN_POSITION   = -1;
-  public final static int  BLACK_HEAVEN_POSITION   = 26;
+  private static final int                     BACKGAMMON_BOARD_SIZE   = 24;
+  private static final int                     TOTAL_CHECKERS          = 15;
+  public final static int                      WHITE_CEMETERY_POSITION = 25;
+  public final static int                      BLACK_CEMETERY_POSITION = 0;
+  public final static int                      WHITE_HEAVEN_POSITION   = -1;
+  public final static int                      BLACK_HEAVEN_POSITION   = 26;
 
   /*
    * Properties
    */
-  
-  private Map<Integer, BackgammonColumn> columns;
+
+  private final Map<Integer, BackgammonColumn> columns;
   private final Dice                           dice;
-  
+
   /*
    * Static methods
    */
-  
+
   public static boolean IS_CEMETERY(final int position) {
-	    return position == BackgammonBoard.WHITE_CEMETERY_POSITION || position == BackgammonBoard.BLACK_CEMETERY_POSITION;
+    return (position == BackgammonBoard.WHITE_CEMETERY_POSITION) || (position == BackgammonBoard.BLACK_CEMETERY_POSITION);
   }
 
   public static int COLOR_TO_CEMETERY_POSITION(final Color color) {
@@ -41,16 +41,16 @@ public class BackgammonBoard implements Board, Cloneable {
   }
 
   public static boolean IS_HEAVEN(final int position) {
-    return position == BackgammonBoard.WHITE_HEAVEN_POSITION || position == BackgammonBoard.BLACK_HEAVEN_POSITION;
+    return (position == BackgammonBoard.WHITE_HEAVEN_POSITION) || (position == BackgammonBoard.BLACK_HEAVEN_POSITION);
   }
 
   public static int COLOR_TO_HEAVEN_POSITION(final Color color) {
     return color == Color.WHITE ? BackgammonBoard.WHITE_HEAVEN_POSITION : BackgammonBoard.BLACK_HEAVEN_POSITION;
   }
-  
+
   public static Color POSITION_TO_SIDE_COLOR(final int position) {
-	  final int ratio = (position - 1) / 6; 
-	  return ratio == 0 ? Color.WHITE : (ratio == 3 ? Color.BLACK : null);
+    final int ratio = (position - 1) / 6;
+    return ratio == 0 ? Color.WHITE : (ratio == 3 ? Color.BLACK : null);
   }
 
   public BackgammonBoard() {
@@ -114,17 +114,20 @@ public class BackgammonBoard implements Board, Cloneable {
     // this.columns.get(20).setNumber(4);
     // this.columns.get(20).setColor(Color.BLACK);
 
-//    orderColumns();
-    
+    // orderColumns();
+
     this.dice = new Dice();
   }
 
-//  private void orderColumns() {
-//	this.columns = (Map<Integer, BackgammonColumn>) this.columns.entrySet().stream()
-//						.sorted((entry1, entry2) -> entry1.getKey() - entry2.getKey())
-//						.collect(Collectors.toMap(entry -> ((Map.Entry<Integer, BackgammonColumn>) entry).getKey(), entry -> ((Map.Entry<Integer, BackgammonColumn>) entry).getValue()));
-//	}
-  
+  // private void orderColumns() {
+  // this.columns = (Map<Integer, BackgammonColumn>)
+  // this.columns.entrySet().stream()
+  // .sorted((entry1, entry2) -> entry1.getKey() - entry2.getKey())
+  // .collect(Collectors.toMap(entry -> ((Map.Entry<Integer, BackgammonColumn>)
+  // entry).getKey(), entry -> ((Map.Entry<Integer, BackgammonColumn>)
+  // entry).getValue()));
+  // }
+
   public BackgammonColumn getColumn(final int position) {
     return this.columns.get(position);
   }
@@ -139,7 +142,7 @@ public class BackgammonBoard implements Board, Cloneable {
 
   @Override
   public void move(final Move move) {
-	final BackgammonMove backgammonMove = (BackgammonMove) move;
+    final BackgammonMove backgammonMove = (BackgammonMove) move;
     final BackgammonColumn from = backgammonMove.getFrom();
     final BackgammonColumn to = backgammonMove.getTo();
 
@@ -154,7 +157,7 @@ public class BackgammonBoard implements Board, Cloneable {
     }
 
     to.setColor(from.getColor());
-    if (from.getNumber() == 0 && !BackgammonBoard.IS_CEMETERY(from.getPosition()))
+    if ((from.getNumber() == 0) && !BackgammonBoard.IS_CEMETERY(from.getPosition()))
       from.setColor(Color.NONE);
   }
 
@@ -164,16 +167,16 @@ public class BackgammonBoard implements Board, Cloneable {
 
   @Override
   public Object clone() {
-	  BackgammonBoard backgammonBoard = new BackgammonBoard();
-	  
-	  columns.forEach((position, column) -> {
-		  backgammonBoard.getColumn(position).setColor(column.getColor());
-		  backgammonBoard.getColumn(position).setNumber(column.getNumber());
-	  });
-	  
-	  backgammonBoard.getDice().setDice(dice.getDice1(), dice.getDice2());
-	  
-	  return backgammonBoard;
+    final BackgammonBoard backgammonBoard = new BackgammonBoard();
+
+    this.columns.forEach((position, column) -> {
+      backgammonBoard.getColumn(position).setColor(column.getColor());
+      backgammonBoard.getColumn(position).setNumber(column.getNumber());
+    });
+
+    backgammonBoard.getDice().setDice(this.dice.getDice1(), this.dice.getDice2());
+
+    return backgammonBoard;
   }
-  
+
 }

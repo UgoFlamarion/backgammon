@@ -12,9 +12,11 @@ public abstract class Game {
   protected boolean       gameIsOver;
 
   public Game(final Board board, final List<Player> players, final Rules rules, final Display display) throws InconsistentGameException {
-	if (players == null || players.size() != 2 || ((BackgammonPlayer) players.get(0)).getColor() == ((BackgammonPlayer) players.get(1)).getColor())
-		throw new InconsistentGameException();
-	  
+    if ((players == null)
+        || (players.size() != 2)
+        || (((BackgammonPlayer) players.get(0)).getColor() == ((BackgammonPlayer) players.get(1)).getColor()))
+      throw new InconsistentGameException();
+
     this.board = board;
     this.players = players;
     this.rules = rules;

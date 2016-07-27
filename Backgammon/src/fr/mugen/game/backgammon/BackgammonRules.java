@@ -32,24 +32,25 @@ public class BackgammonRules implements Rules {
     final int moveLength = backgammonMove.getMoveLength();
 
     // Unselect case
-    //if (from.equals(to) || (!BackgammonBoard.IS_CEMETERY(to.getPosition()) && from.equals(to)))
+    // if (from.equals(to) || (!BackgammonBoard.IS_CEMETERY(to.getPosition()) &&
+    // from.equals(to)))
     if (from.equals(to))
       return true;
 
-//    if (((BackgammonPlayer) player).getColor() == Color.WHITE)
-//     System.out.println("Check (" + from.getPosition() + "--> " +
-//     to.getPosition() + ") : " +
-//     !BackgammonBoard.IS_CEMETERY(to.getPosition())
-//     + " " + (from.getColor() == playerColor) + " " + (from.getNumber() > 0) +
-//     " "
-//     + (Color.NONE == to.getColor() || from.getColor() == to.getColor() ||
-//     to.getNumber() == 1) + " "
-//     + (Color.WHITE.equals(playerColor) && from.getPosition() -
-//     to.getPosition() > 0
-//     || Color.BLACK.equals(playerColor) && from.getPosition() -
-//     to.getPosition() < 0)
-//     + " " + (dice.getDice1() == moveLength || dice.getDice2() ==
-//     moveLength));
+    // if (((BackgammonPlayer) player).getColor() == Color.WHITE)
+    // System.out.println("Check (" + from.getPosition() + "--> " +
+    // to.getPosition() + ") : " +
+    // !BackgammonBoard.IS_CEMETERY(to.getPosition())
+    // + " " + (from.getColor() == playerColor) + " " + (from.getNumber() > 0) +
+    // " "
+    // + (Color.NONE == to.getColor() || from.getColor() == to.getColor() ||
+    // to.getNumber() == 1) + " "
+    // + (Color.WHITE.equals(playerColor) && from.getPosition() -
+    // to.getPosition() > 0
+    // || Color.BLACK.equals(playerColor) && from.getPosition() -
+    // to.getPosition() < 0)
+    // + " " + (dice.getDice1() == moveLength || dice.getDice2() ==
+    // moveLength));
 
     return !BackgammonBoard.IS_CEMETERY(to.getPosition())
         && (from.getColor() == playerColor)
@@ -70,9 +71,9 @@ public class BackgammonRules implements Rules {
     // player.getColor() && column.getNumber() > 0));
 
     final int cemeteryPosition = BackgammonBoard.COLOR_TO_CEMETERY_POSITION(player.getColor());
-    return (board.getColumn(cemeteryPosition).getNumber() == 0 || column.getPosition() == cemeteryPosition)
-        && column.getColor() == player.getColor()
-        && column.getNumber() > 0;
+    return ((board.getColumn(cemeteryPosition).getNumber() == 0) || (column.getPosition() == cemeteryPosition))
+        && (column.getColor() == player.getColor())
+        && (column.getNumber() > 0);
   }
 
   public boolean calculatePossibilities(final BackgammonBoard board, final BackgammonPlayer player) {
@@ -87,10 +88,9 @@ public class BackgammonRules implements Rules {
       // Avoid adding selectable columns for which the only possibility is
       // itself.
       if (columns.size() > 1) {
-    	  System.out.println("Put " + selectableColumn.getPosition());
+        System.out.println("Put " + selectableColumn.getPosition());
         this.possibilities.put(selectableColumn, columns);
-      }
-      else
+      } else
         System.out.println("Didn't put " + selectableColumn.getPosition() + " -> " + columns.get(0).getPosition());
     });
 
@@ -155,8 +155,9 @@ public class BackgammonRules implements Rules {
   private boolean existFurtherCheckerForHeaven(final BackgammonColumn selectableColumn) {
     return this.possibilities.keySet().stream().filter(p -> {
       final int possibilityPosition = selectableColumn.getPosition();
-//      return (this.possibilities.get(p).stream().filter(p2 -> BackgammonBoard.IS_HEAVEN(p2.getPosition())).count() > 0) &&
-          return (((p.getPosition() - possibilityPosition) * BackgammonRules.getSideFactor(possibilityPosition)) > 0);
+      // return (this.possibilities.get(p).stream().filter(p2 ->
+      // BackgammonBoard.IS_HEAVEN(p2.getPosition())).count() > 0) &&
+      return (((p.getPosition() - possibilityPosition) * BackgammonRules.getSideFactor(possibilityPosition)) > 0);
     }).count() > 0;
   }
 
@@ -167,32 +168,34 @@ public class BackgammonRules implements Rules {
             && (Math.abs(p.getPosition() - BackgammonBoard.COLOR_TO_HEAVEN_POSITION(selectableColumn.getColor())) > 7))
         .count() > 0;
   }
-  
+
   public int getCursorDefaultPosition(final BackgammonBoard board, final BackgammonPlayer player, final BackgammonColumn selectedColumn) {
-	  if (this.possibilities == null || this.possibilities.isEmpty())
-		  return -1;
-	  
+    if ((this.possibilities == null) || this.possibilities.isEmpty())
+      return -1;
+
     final Collection<BackgammonColumn> columns = selectedColumn != null ? this.possibilities.get(selectedColumn)
         : this.possibilities.keySet();
     if ((columns != null) && (columns.size() > 0))
       return columns.iterator().next().getPosition();
-    
+
     return -1;
   }
 
   public int getNextPossiblePositionOnLeft(final BackgammonColumn currentColumn, final BackgammonColumn selectedColumn) {
-	  return getNextPosition(currentColumn, selectedColumn, false);
+    return getNextPosition(currentColumn, selectedColumn, false);
   }
 
   public int getNextPossiblePositionOnRight(final BackgammonColumn currentColumn, final BackgammonColumn selectedColumn) {
-	  return getNextPosition(currentColumn, selectedColumn, true);
+    return getNextPosition(currentColumn, selectedColumn, true);
   }
 
   private int getNextPosition(final BackgammonColumn currentColumn, final BackgammonColumn selectedColumn, final boolean clockwise) {
-	  final List<BackgammonColumn> columns = selectedColumn == null ? this.possibilities.keySet().stream().collect(Collectors.toList()) : this.possibilities.get(selectedColumn);
-	  final int index = columns.indexOf(currentColumn) + (clockwise ? 1 : -1);
-	  
-	  return index >= columns.size() ? columns.get(0).getPosition() : (index < 0 ? columns.get(columns.size() - 1).getPosition() : columns.get(index).getPosition());
+    final List<BackgammonColumn> columns = selectedColumn == null ? this.possibilities.keySet().stream().collect(Collectors.toList())
+        : this.possibilities.get(selectedColumn);
+    final int index = columns.indexOf(currentColumn) + (clockwise ? 1 : -1);
+
+    return index >= columns.size() ? columns.get(0).getPosition()
+        : (index < 0 ? columns.get(columns.size() - 1).getPosition() : columns.get(index).getPosition());
   }
 
   /**

@@ -56,10 +56,10 @@ public class BackgammonColumn implements Cloneable {
 
   @Override
   public Object clone() {
-	BackgammonColumn columnCopy = new BackgammonColumn(position, color);
-	columnCopy.setNumber(number);
-	
-	return columnCopy;
+    final BackgammonColumn columnCopy = new BackgammonColumn(this.position, this.color);
+    columnCopy.setNumber(this.number);
+
+    return columnCopy;
   }
-  
+
 }

@@ -32,18 +32,18 @@ public class JavaFXDisplay implements Display {
   /*
    * Constants
    */
-	
-  public static double        WIDTH;
-  public static double        HEIGHT;
+
+  public static double                 WIDTH;
+  public static double                 HEIGHT;
 
   /*
-   * 
+   *
    */
-  
-  private final Pane          root;
-  private BackgammonGame      game;
-  private BackgammonBoardDisplay backgammonBoardDisplay;
-  
+
+  private final Pane                   root;
+  private BackgammonGame               game;
+  private final BackgammonBoardDisplay backgammonBoardDisplay;
+
   public JavaFXDisplay(final Pane root) throws URISyntaxException {
     this.root = root;
 
@@ -56,7 +56,7 @@ public class JavaFXDisplay implements Display {
   @Override
   public void update(final Game game) {
     this.game = (BackgammonGame) game;
-	  
+
     this.backgammonBoardDisplay.update(this.game);
   }
 
@@ -100,27 +100,31 @@ public class JavaFXDisplay implements Display {
     final VBox vbox = new VBox();
     final Text text = new Text();
     text.getStyleClass().add("gameOver");
-    text.setText(color.name().substring(0, 1) + color.name().substring(1, color.name().length()).toLowerCase() + " player wins in " + turn + " turns.");
+    text.setText(color.name().substring(0, 1)
+        + color.name().substring(1, color.name().length()).toLowerCase()
+        + " player wins in "
+        + turn
+        + " turns.");
     vbox.getChildren().add(text);
 
     final SequentialTransition sequentialTransition = new SequentialTransition(vbox, createDropDownAnimation(vbox, 4000));
 
     this.root.getChildren().add(vbox);
     sequentialTransition.play();
-    
+
     this.root.getScene().setOnKeyPressed(event -> {
-    	if (event.getCode() == KeyCode.ENTER) {
-    		// Restart the game.
-    		this.root.setId("root");
-    		
-    	    BackgammonGame game;
-			try {
-				game = new BackgammonGame(new BackgammonBoard(), this.game.getPlayers(), new BackgammonRules(), this);
-				game.start();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-    	}
+      if (event.getCode() == KeyCode.ENTER) {
+        // Restart the game.
+        this.root.setId("root");
+
+        BackgammonGame game;
+        try {
+          game = new BackgammonGame(new BackgammonBoard(), this.game.getPlayers(), new BackgammonRules(), this);
+          game.start();
+        } catch (final Exception e) {
+          e.printStackTrace();
+        }
+      }
     });
   }
 
@@ -142,15 +146,15 @@ public class JavaFXDisplay implements Display {
    * Show column numbers in order to debug easily.
    */
   public void showHideColumnNumbers() {
-	  this.backgammonBoardDisplay.showHideColumnNumbers();
+    this.backgammonBoardDisplay.showHideColumnNumbers();
   }
-  
+
   /*
    * Sounds
    */
 
   public void playRollingDiceSound() {
-	  this.backgammonBoardDisplay.playRollingDiceSound();
+    this.backgammonBoardDisplay.playRollingDiceSound();
   }
 
   /*
@@ -158,30 +162,30 @@ public class JavaFXDisplay implements Display {
    */
 
   public void left() {
-	  this.backgammonBoardDisplay.left();
+    this.backgammonBoardDisplay.left();
   }
 
   public void right() {
-	  this.backgammonBoardDisplay.right();
+    this.backgammonBoardDisplay.right();
   }
 
   public void select() {
-	  this.backgammonBoardDisplay.select();
+    this.backgammonBoardDisplay.select();
   }
 
   public void select(final int position) {
-	  this.backgammonBoardDisplay.select(position);
+    this.backgammonBoardDisplay.select(position);
   }
 
   /*
    * For IA purpose.
    */
   public void selectLater(final int from, final int to) {
-	  this.backgammonBoardDisplay.selectLater(from, to);
+    this.backgammonBoardDisplay.selectLater(from, to);
   }
 
   public void initCursorSelectedPosition() {
-	  this.backgammonBoardDisplay.initCursorSelectedPosition();
+    this.backgammonBoardDisplay.initCursorSelectedPosition();
   }
 
   /*

@@ -47,7 +47,7 @@ public class BackgammonMove implements Move, Cloneable {
 
   @Override
   public Object clone() {
-	  return new BackgammonMove((BackgammonColumn) from.clone(), (BackgammonColumn) to.clone());
+    return new BackgammonMove((BackgammonColumn) this.from.clone(), (BackgammonColumn) this.to.clone());
   }
-  
+
 }

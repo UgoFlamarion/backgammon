@@ -19,14 +19,13 @@ public class JavaFXUtils {
         + ((position / 13) * BackgammonBoardDisplay.GAPY)
         + (number * BackgammonBoardDisplay.CHECKER_GAPY * (position > 12 ? -1 : 1));
   }
-  
+
   public static int getNumberX(final int position) {
-	return getCheckerX(position) + BackgammonBoardDisplay.NUMBER_ADDITIONNAL_GAPX;
+    return JavaFXUtils.getCheckerX(position) + BackgammonBoardDisplay.NUMBER_ADDITIONNAL_GAPX;
   }
-  
+
   public static int getNumberY(final int position) {
-	    return BackgammonBoardDisplay.BORDERY
-	        + ((position / 13) * BackgammonBoardDisplay.NUMBER_GAPY);
+    return BackgammonBoardDisplay.BORDERY + ((position / 13) * BackgammonBoardDisplay.NUMBER_GAPY);
   }
 
   public static double getCursorX(final int position) {
@@ -35,17 +34,16 @@ public class JavaFXUtils {
     else if (BackgammonBoard.IS_HEAVEN(position))
       return BackgammonBoardDisplay.BORDERX;
 
-    final int x = BackgammonBoardDisplay.BORDERX
-        + (((position - 1) % 12) * BackgammonBoardDisplay.GAPX // +
-    )
-        + ((((position % 12) / 7) == 1) || ((position % 12) == 0) ? BackgammonBoardDisplay.MIDDLE_GAPX : 0);
+    final int x = BackgammonBoardDisplay.BORDERX + (((position - 1) % 12) * BackgammonBoardDisplay.GAPX // +
+    ) + ((((position % 12) / 7) == 1) || ((position % 12) == 0) ? BackgammonBoardDisplay.MIDDLE_GAPX : 0);
     return (int) (position <= 12 ? x + (BackgammonBoardDisplay.CURSOR_IMAGE_SIZE / 2)
         : JavaFXDisplay.WIDTH - x - (BackgammonBoardDisplay.GAPX / 2) - (BackgammonBoardDisplay.CURSOR_IMAGE_SIZE / 2));
   }
 
   public static int getCursorY(final int position) {
     if (BackgammonBoard.IS_CEMETERY(position))
-      return (int) (position == BackgammonBoard.WHITE_CEMETERY_POSITION ? BackgammonBoardDisplay.CEMETERY_LINE1 : BackgammonBoardDisplay.CEMETERY_LINE2);
+      return position == BackgammonBoard.WHITE_CEMETERY_POSITION ? BackgammonBoardDisplay.CEMETERY_LINE1
+          : BackgammonBoardDisplay.CEMETERY_LINE2;
     else if (BackgammonBoard.IS_HEAVEN(position))
       return (int) (JavaFXDisplay.HEIGHT / 2) - (BackgammonBoardDisplay.CURSOR_IMAGE_SIZE / 2);
 

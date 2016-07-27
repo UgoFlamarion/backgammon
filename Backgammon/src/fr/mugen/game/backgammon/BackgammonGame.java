@@ -28,7 +28,8 @@ public class BackgammonGame extends Game {
 
   protected int              turn;
 
-  public BackgammonGame(final Board board, final List<Player> players, final Rules rules, final Display display) throws InconsistentGameException {
+  public BackgammonGame(final Board board, final List<Player> players, final Rules rules, final Display display)
+      throws InconsistentGameException {
     super(board, players, rules, display);
   }
 
@@ -73,7 +74,7 @@ public class BackgammonGame extends Game {
     if (((BackgammonBoard) this.board).getDice().keepPlaying())
       return this.currentPlayer;
 
-    if (this.playersIterator == null || !this.playersIterator.hasNext()) {
+    if ((this.playersIterator == null) || !this.playersIterator.hasNext()) {
       this.playersIterator = this.players.iterator();
       this.turn++;
     }
@@ -122,11 +123,13 @@ public class BackgammonGame extends Game {
   }
 
   public int getNextPossiblePositionOnLeft(final int currentPosition, final int selectedCheckerPosition) {
-    return ((BackgammonRules) this.rules).getNextPossiblePositionOnLeft(((BackgammonBoard) this.board).getColumn(currentPosition), ((BackgammonBoard) this.board).getColumn(selectedCheckerPosition));
+    return ((BackgammonRules) this.rules).getNextPossiblePositionOnLeft(((BackgammonBoard) this.board).getColumn(currentPosition),
+        ((BackgammonBoard) this.board).getColumn(selectedCheckerPosition));
   }
 
   public int getNextPossiblePositionOnRight(final int currentPosition, final int selectedCheckerPosition) {
-    return ((BackgammonRules) this.rules).getNextPossiblePositionOnRight(((BackgammonBoard) this.board).getColumn(currentPosition), ((BackgammonBoard) this.board).getColumn(selectedCheckerPosition));
+    return ((BackgammonRules) this.rules).getNextPossiblePositionOnRight(((BackgammonBoard) this.board).getColumn(currentPosition),
+        ((BackgammonBoard) this.board).getColumn(selectedCheckerPosition));
   }
 
   /*

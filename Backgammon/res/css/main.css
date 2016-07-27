@@ -34,7 +34,7 @@
 }
 
 .gameOver {
-    -fx-font-size: 250px;
+    -fx-font-size: 125px;
     -fx-font-family: "Game Over";
     -fx-fill: white;
     -fx-opacity: 1;	
