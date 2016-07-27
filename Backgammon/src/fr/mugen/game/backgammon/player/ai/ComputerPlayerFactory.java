@@ -1,7 +1,6 @@
 package fr.mugen.game.backgammon.player.ai;
 
 import fr.mugen.game.backgammon.BackgammonColumn.Color;
-import fr.mugen.game.framework.Controls;
 import fr.mugen.game.framework.Player;
 
 public class ComputerPlayerFactory {
@@ -10,14 +9,14 @@ public class ComputerPlayerFactory {
 		EASY, MEDIUM, HARD
 	}
 	
-  public static Player createComputerPlayer(final Controls controls, final Color color, final Difficulty difficulty) {
+  public static Player createComputerPlayer(final Color color, final Difficulty difficulty) {
 	  switch (difficulty) {
 	  case EASY :
-		  return new EasyComputerPlayer(controls, color);
+		  return new EasyComputerPlayer(color);
 	  case MEDIUM :
-		  return new MediumComputerPlayer(controls, color);
+		  return new MediumComputerPlayer(color);
 	  case HARD :
-		  return null;
+		  return new MediumComputerPlayer(color);
 	  }
 	  return null;
   }

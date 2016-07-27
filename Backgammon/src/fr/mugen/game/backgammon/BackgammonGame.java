@@ -10,6 +10,7 @@ import fr.mugen.game.backgammon.player.BackgammonPlayer;
 import fr.mugen.game.framework.Board;
 import fr.mugen.game.framework.Display;
 import fr.mugen.game.framework.Game;
+import fr.mugen.game.framework.InconsistentGameException;
 import fr.mugen.game.framework.Player;
 import fr.mugen.game.framework.Rules;
 
@@ -21,14 +22,13 @@ public class BackgammonGame extends Game {
 
   public final static int    DEFAULT_CURSOR_POSITION  = -2;
   public final static String NO_POSSIBILITIES_MESSAGE = "Aucun coup possible, passez votre tour.";
-  public final static String GAME_OVER_MESSAGE        = "La partie est terminée.";
 
   protected Iterator<Player> playersIterator;
   protected BackgammonPlayer currentPlayer;
 
   protected int              turn;
 
-  public BackgammonGame(final Board board, final List<Player> players, final Rules rules, final Display display) {
+  public BackgammonGame(final Board board, final List<Player> players, final Rules rules, final Display display) throws InconsistentGameException {
     super(board, players, rules, display);
   }
 
@@ -51,9 +51,7 @@ public class BackgammonGame extends Game {
     }
 
     final boolean existPossibilities = calculatePossibilities(BackgammonGame.DEFAULT_CURSOR_POSITION);
-
     player.play(this.board, this.rules, this.display);
-    this.turn++;
     updateDisplay();
 
     if (!existPossibilities) {
@@ -75,15 +73,17 @@ public class BackgammonGame extends Game {
     if (((BackgammonBoard) this.board).getDice().keepPlaying())
       return this.currentPlayer;
 
-    if (this.playersIterator == null || !this.playersIterator.hasNext())
+    if (this.playersIterator == null || !this.playersIterator.hasNext()) {
       this.playersIterator = this.players.iterator();
+      this.turn++;
+    }
 
     return this.currentPlayer = (BackgammonPlayer) this.playersIterator.next();
   }
 
   private void gameOver() {
     updateDisplay();
-    ((JavaFXDisplay) this.display).showGameOverScreen(this.currentPlayer.getColor());
+    ((JavaFXDisplay) this.display).showGameOverScreen(this.currentPlayer.getColor(), this.turn);
   }
 
   public void updateDisplay() {

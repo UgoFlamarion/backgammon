@@ -2,6 +2,8 @@ package fr.mugen.game.framework;
 
 import java.util.List;
 
+import fr.mugen.game.backgammon.player.BackgammonPlayer;
+
 public abstract class Game {
   protected Board         board;
   protected List<Player>  players;
@@ -9,7 +11,10 @@ public abstract class Game {
   protected final Display display;
   protected boolean       gameIsOver;
 
-  public Game(final Board board, final List<Player> players, final Rules rules, final Display display) {
+  public Game(final Board board, final List<Player> players, final Rules rules, final Display display) throws InconsistentGameException {
+	if (players == null || players.size() != 2 || ((BackgammonPlayer) players.get(0)).getColor() == ((BackgammonPlayer) players.get(1)).getColor())
+		throw new InconsistentGameException();
+	  
     this.board = board;
     this.players = players;
     this.rules = rules;

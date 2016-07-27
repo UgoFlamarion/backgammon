@@ -9,14 +9,13 @@ import fr.mugen.game.backgammon.BackgammonColumn.Color;
 import fr.mugen.game.backgammon.BackgammonRules;
 import fr.mugen.game.backgammon.display.JavaFXDisplay;
 import fr.mugen.game.framework.Board;
-import fr.mugen.game.framework.Controls;
 import fr.mugen.game.framework.Display;
 import fr.mugen.game.framework.Rules;
 
 public class EasyComputerPlayer extends ComputerPlayer {
 
-  public EasyComputerPlayer(final Controls controls, final Color color) {
-    super(controls, color);
+  public EasyComputerPlayer(final Color color) {
+    super(color);
   }
 
   @Override

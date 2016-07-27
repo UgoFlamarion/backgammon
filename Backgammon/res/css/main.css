@@ -1,4 +1,9 @@
-#root{
+@font-face {
+	font-family: "Game Over";
+	src: url("../font/game_over.ttf");
+}
+
+#board {
     -fx-background-image: url("../img/board.png");
     -fx-background-repeat: stretch;
 }
@@ -8,7 +13,8 @@
 }
 
 .deadCount {
-	-fx-font-size: 20;
+	-fx-font-family: "Game Over";
+	-fx-font-size: 40px;
 }
 
 .deadCount.WHITE {
@@ -20,23 +26,51 @@
 }
 
 .message {
-    -fx-font-size: 15pt;
-    -fx-font-family: "Segoe UI Semibold";
+    -fx-font-family: "Game Over";
+    -fx-font-size: 125px;
     -fx-fill: white;
     -fx-opacity: 1;
     -fx-text-alignment: center;
 }
 
 .gameOver {
-    -fx-font-size: 36pt;
-    -fx-font-family: "Segoe UI Semibold";
+    -fx-font-size: 250px;
+    -fx-font-family: "Game Over";
     -fx-fill: white;
     -fx-opacity: 1;	
     -fx-text-alignment: center;
 }
 
 .number {
-	-fx-font-size: 16pt;
-    -fx-font-family: "Segoe UI Semibold";
+	-fx-font-size: 125px;
+    -fx-font-family: "Game Over";
     -fx-fill: white;
+}
+
+/* MENU */
+
+#menu {
+    -fx-background-image: url("../img/menu_background.png");
+    -fx-background-repeat: stretch;
+    -fx-alignment: center;
+}
+
+.menuPanel {
+	-fx-alignment: center;
+	-fx-border-color: white;
+	-fx-border-width: 5px;
+}
+
+.menuBox {
+	-fx-alignment: center;
+}
+
+.menuElement {
+	-fx-font-size: 125px;
+    -fx-font-family: "Game Over";
+    -fx-fill: white;
+}
+
+.menuElement.selected {
+	-fx-fill: gray;
 }
